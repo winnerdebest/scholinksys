@@ -1,0 +1,42 @@
+{% extends "principal/base.html" %}
+{% block content %}
+
+<h1 class="text-2xl font-bold mb-4">Assign Subject to {{ school_class.name }}</h1>
+{% if messages %}
+    <div class="px-6 pt-4 space-y-2">
+        {% for message in messages %}
+        <div class="p-3 rounded-lg {% if message.tags == 'error' %}bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200{% else %}bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200{% endif %}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+<form method="POST" class="max-w-md space-y-4">
+    {% csrf_token %}
+
+    <div>
+        <label for="subject" class="block font-medium">Select Subject</label>
+        <select name="subject" id="subject" class="w-full border rounded px-3 py-2">
+            <option value="">-- Choose Subject --</option>
+            {% for subject in subjects %}
+            <option value="{{ subject.id }}">{{ subject.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div>
+        <label for="teacher" class="block font-medium">Assign Teacher</label>
+        <select name="teacher_id" id="teacher" class="w-full border rounded px-3 py-2">
+            <option value="">-- Choose Teacher --</option>
+            {% for teacher in teachers %}
+            <option value="{{ teacher.id }}">{{ teacher.user.get_full_name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Assign</button>
+    <a href="{% url 'principal:class_detail' school_class.id %}" class="ml-4 text-gray-700">Cancel</a>
+</form>
+
+{% endblock %}

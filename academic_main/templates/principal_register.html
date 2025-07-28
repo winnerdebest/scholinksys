@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Register Your School • Scholink</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .password-toggle {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #6b7280;
+        }
+        .password-toggle:hover {
+            color: #2563eb;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen flex items-center justify-center p-4">
+    <div class="w-full max-w-2xl bg-white rounded-xl shadow-lg overflow-hidden animate-fade-in">
+        <!-- Header with decorative element -->
+        <div class="bg-gradient-to-r from-primary-600 to-primary-700 p-6 text-white">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-2xl font-bold">Register Your School</h1>
+                    <p class="opacity-90">Join Serverlink's learning platform</p>
+                </div>
+                <div class="bg-white/20 p-3 rounded-full">
+                    <i class="fas fa-school text-xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Progress indicator -->
+        <div class="px-6 pt-4">
+            <div class="flex items-center">
+                <div class="flex-1 h-1 bg-gray-200 rounded-full">
+                    <div class="h-1 bg-primary-600 rounded-full w-1/3" id="progress-bar"></div>
+                </div>
+                <span class="ml-3 text-sm text-gray-600">Step <span id="current-step">1</span> of 3</span>
+            </div>
+        </div>
+
+        <!-- Multi-step form -->
+        <form method="post" enctype="multipart/form-data" class="p-6" id="registration-form">
+            {% csrf_token %}
+
+            <!-- Step 1: Personal Information -->
+            <div class="form-step active" data-step="1">
+                <h2 class="text-xl font-semibold mb-6 text-gray-800 flex items-center">
+                    <span class="bg-primary-100 text-primary-700 w-8 h-8 rounded-full flex items-center justify-center mr-3">1</span>
+                    Personal Information
+                </h2>
+
+                <div class="space-y-5">
+                    <!-- Full Name -->
+                    <div>
+                        <label for="id_full_name" class="block text-sm font-medium text-gray-700 mb-1">Full Name*</label>
+                        <div class="relative">
+                            <input type="text" name="full_name" id="id_full_name" value="{{ form.full_name.value|default_if_none:'' }}"
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-600 focus:border-primary-600 transition"
+                                   placeholder="John Doe" required>
+                            <i class="fas fa-user absolute right-3 top-3.5 text-gray-400"></i>
+                        </div>
+                        {% if form.full_name.errors %}
+                            <p class="mt-1 text-sm text-red-600">{{ form.full_name.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+
+                    <!-- Email -->
+                    <div>
+                        <label for="id_email" class="block text-sm font-medium text-gray-700 mb-1">Email*</label>
+                        <div class="relative">
+                            <input type="email" name="email" id="id_email" value="{{ form.email.value|default_if_none:'' }}"
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-600 focus:border-primary-600 transition"
+                                   placeholder="your@email.com" required>
+                            <i class="fas fa-envelope absolute right-3 top-3.5 text-gray-400"></i>
+                        </div>
+                        {% if form.email.errors %}
+                            <p class="mt-1 text-sm text-red-600">{{ form.email.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="flex justify-end mt-8">
+                    <button type="button" class="next-step bg-primary-600 hover:bg-primary-700 text-white font-medium py-2.5 px-6 rounded-lg transition">
+                        Next <i class="fas fa-arrow-right ml-2"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Step 2: Account Security -->
+            <div class="form-step hidden" data-step="2">
+                <h2 class="text-xl font-semibold mb-6 text-gray-800 flex items-center">
+                    <span class="bg-primary-100 text-primary-700 w-8 h-8 rounded-full flex items-center justify-center mr-3">2</span>
+                    Account Security
+                </h2>
+
+                <div class="space-y-5">
+                    <!-- Password1 -->
+                    <div>
+                        <label for="id_password1" class="block text-sm font-medium text-gray-700 mb-1">Password*</label>
+                        <div class="relative">
+                            <input type="password" name="password1" id="id_password1"
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-600 focus:border-primary-600 transition pr-10"
+                                   placeholder="At least 8 characters" required>
+                            <span class="password-toggle" id="toggle-password1">
+                                <i class="fas fa-eye"></i>
+                            </span>
+                        </div>
+                        <div class="mt-2 text-xs text-gray-500">
+                            <p class="password-requirement" data-requirement="length"><i class="fas fa-circle text-gray-300 mr-1"></i> 8+ characters</p>
+                            <p class="password-requirement" data-requirement="number"><i class="fas fa-circle text-gray-300 mr-1"></i> Contains number</p>
+                            <p class="password-requirement" data-requirement="special"><i class="fas fa-circle text-gray-300 mr-1"></i> Special character</p>
+                        </div>
+                        {% if form.password1.errors %}
+                            <p class="mt-1 text-sm text-red-600">{{ form.password1.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+
+                    <!-- Password2 -->
+                    <div>
+                        <label for="id_password2" class="block text-sm font-medium text-gray-700 mb-1">Confirm Password*</label>
+                        <div class="relative">
+                            <input type="password" name="password2" id="id_password2"
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-600 focus:border-primary-600 transition pr-10"
+                                   placeholder="Re-enter your password" required>
+                            <span class="password-toggle" id="toggle-password2">
+                                <i class="fas fa-eye"></i>
+                            </span>
+                        </div>
+                        {% if form.password2.errors %}
+                            <p class="mt-1 text-sm text-red-600">{{ form.password2.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="flex justify-between mt-8">
+                    <button type="button" class="prev-step text-gray-600 hover:text-gray-800 font-medium py-2.5 px-6 rounded-lg transition">
+                        <i class="fas fa-arrow-left mr-2"></i> Back
+                    </button>
+                    <button type="button" class="next-step bg-primary-600 hover:bg-primary-700 text-white font-medium py-2.5 px-6 rounded-lg transition">
+                        Next <i class="fas fa-arrow-right ml-2"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Step 3: School Information -->
+            <div class="form-step hidden" data-step="3">
+                <h2 class="text-xl font-semibold mb-6 text-gray-800 flex items-center">
+                    <span class="bg-primary-100 text-primary-700 w-8 h-8 rounded-full flex items-center justify-center mr-3">3</span>
+                    School Information
+                </h2>
+
+                <div class="space-y-5">
+                    <!-- School Name -->
+                    <div>
+                        <label for="id_school_name" class="block text-sm font-medium text-gray-700 mb-1">School Name*</label>
+                        <div class="relative">
+                            <input type="text" name="school_name" id="id_school_name" value="{{ form.school_name.value|default_if_none:'' }}"
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-600 focus:border-primary-600 transition"
+                                   placeholder="Your school's official name" required>
+                            <i class="fas fa-building absolute right-3 top-3.5 text-gray-400"></i>
+                        </div>
+                        {% if form.school_name.errors %}
+                            <p class="mt-1 text-sm text-red-600">{{ form.school_name.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+
+                    <!-- School Email -->
+                    <div>
+                        <label for="id_school_email" class="block text-sm font-medium text-gray-700 mb-1">School Email*</label>
+                        <div class="relative">
+                            <input type="email" name="school_email" id="id_school_email" value="{{ form.school_email.value|default_if_none:'' }}"
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-600 focus:border-primary-600 transition"
+                                   placeholder="school@email.com" required>
+                            <i class="fas fa-at absolute right-3 top-3.5 text-gray-400"></i>
+                        </div>
+                        {% if form.school_email.errors %}
+                            <p class="mt-1 text-sm text-red-600">{{ form.school_email.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+
+                    <!-- School Address -->
+                    <div>
+                        <label for="id_school_address" class="block text-sm font-medium text-gray-700 mb-1">School Address*</label>
+                        <div class="relative">
+                            <textarea name="school_address" id="id_school_address"
+                                      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-600 focus:border-primary-600 transition"
+                                      rows="3" placeholder="Full physical address of your school" required>{{ form.school_address.value }}</textarea>
+                            <i class="fas fa-map-marker-alt absolute right-3 top-3.5 text-gray-400"></i>
+                        </div>
+                        {% if form.school_address.errors %}
+                            <p class="mt-1 text-sm text-red-600">{{ form.school_address.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+
+                    <!-- School Logo -->
+                    <div>
+                        <label for="id_school_logo" class="block text-sm font-medium text-gray-700 mb-1">School Logo*</label>
+                        <div class="mt-1 flex items-center">
+                            <label for="id_school_logo" class="cursor-pointer">
+                                <div class="inline-block px-4 py-3 bg-white border-2 border-dashed border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:border-primary-600 transition group">
+                                    <div class="flex items-center">
+                                        <i class="fas fa-cloud-upload-alt text-primary-600 mr-2 group-hover:text-primary-700"></i>
+                                        <span id="file-name">Click to upload logo</span>
+                                    </div>
+                                    <p class="mt-1 text-xs text-gray-500">PNG, JPG up to 5MB</p>
+                                </div>
+                                <input type="file" name="school_logo" id="id_school_logo" class="sr-only" accept="image/*" required>
+                            </label>
+                        </div>
+                        <div id="logo-preview" class="mt-3 hidden">
+                            <img id="preview-image" src="#" alt="Logo preview" class="h-20 rounded-lg border">
+                        </div>
+                        {% if form.school_logo.errors %}
+                            <p class="mt-1 text-sm text-red-600">{{ form.school_logo.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="flex justify-between mt-8">
+                    <button type="button" class="prev-step text-gray-600 hover:text-gray-800 font-medium py-2.5 px-6 rounded-lg transition">
+                        <i class="fas fa-arrow-left mr-2"></i> Back
+                    </button>
+                    <button type="submit" class="bg-primary-600 hover:bg-primary-700 text-white font-medium py-2.5 px-6 rounded-lg transition flex items-center">
+                        <span id="submit-text">Create Account</span>
+                        <span id="submit-spinner" class="ml-2 hidden">
+                            <i class="fas fa-spinner fa-spin"></i>
+                        </span>
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // Multi-step form functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('registration-form');
+            const steps = document.querySelectorAll('.form-step');
+            const nextButtons = document.querySelectorAll('.next-step');
+            const prevButtons = document.querySelectorAll('.prev-step');
+            const progressBar = document.getElementById('progress-bar');
+            const currentStepDisplay = document.getElementById('current-step');
+            const submitButton = document.querySelector('button[type="submit"]');
+            const submitText = document.getElementById('submit-text');
+            const submitSpinner = document.getElementById('submit-spinner');
+            
+            let currentStep = 1;
+
+            // Show current step
+            function showStep(step) {
+                steps.forEach((s, index) => {
+                    if (index + 1 === step) {
+                        s.classList.remove('hidden');
+                        s.classList.add('active');
+                    } else {
+                        s.classList.add('hidden');
+                        s.classList.remove('active');
+                    }
+                });
+                
+                // Update progress bar
+                const progressPercentage = (step / steps.length) * 100;
+                progressBar.style.width = `${progressPercentage}%`;
+                currentStepDisplay.textContent = step;
+                currentStep = step;
+            }
+
+            // Next button click
+            nextButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // Validate current step before proceeding
+                    let isValid = true;
+                    const currentStepFields = document.querySelector(`.form-step[data-step="${currentStep}"]`).querySelectorAll('[required]');
+                    
+                    currentStepFields.forEach(field => {
+                        if (!field.value.trim()) {
+                            isValid = false;
+                            field.classList.add('border-red-500');
+                            const errorMsg = document.createElement('p');
+                            errorMsg.className = 'mt-1 text-sm text-red-600';
+                            errorMsg.textContent = 'This field is required';
+                            
+                            // Check if error message already exists
+                            if (!field.nextElementSibling || !field.nextElementSibling.classList.contains('text-red-600')) {
+                                field.parentNode.insertBefore(errorMsg, field.nextSibling);
+                            }
+                        } else {
+                            field.classList.remove('border-red-500');
+                            // Remove error message if exists
+                            if (field.nextElementSibling && field.nextElementSibling.classList.contains('text-red-600')) {
+                                field.nextElementSibling.remove();
+                            }
+                        }
+                    });
+                    
+                    if (isValid) {
+                        showStep(currentStep + 1);
+                    }
+                });
+            });
+
+            // Previous button click
+            prevButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    showStep(currentStep - 1);
+                });
+            });
+
+            // Password toggle functionality
+            function setupPasswordToggle(passwordId, toggleId) {
+                const passwordInput = document.getElementById(passwordId);
+                const toggleButton = document.getElementById(toggleId);
+                
+                toggleButton.addEventListener('click', function() {
+                    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                    passwordInput.setAttribute('type', type);
+                    toggleButton.innerHTML = type === 'password' ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
+                });
+            }
+
+            setupPasswordToggle('id_password1', 'toggle-password1');
+            setupPasswordToggle('id_password2', 'toggle-password2');
+
+            // Password strength validation
+            const password1 = document.getElementById('id_password1');
+            if (password1) {
+                password1.addEventListener('input', function() {
+                    const password = this.value;
+                    const requirements = {
+                        length: password.length >= 8,
+                        number: /\d/.test(password),
+                        special: /[!@#$%^&*(),.?":{}|<>]/.test(password)
+                    };
+                    
+                    Object.keys(requirements).forEach(req => {
+                        const element = document.querySelector(`.password-requirement[data-requirement="${req}"] i`);
+                        if (requirements[req]) {
+                            element.classList.remove('text-gray-300');
+                            element.classList.add('text-green-500');
+                        } else {
+                            element.classList.remove('text-green-500');
+                            element.classList.add('text-gray-300');
+                        }
+                    });
+                });
+            }
+
+            // File upload preview
+            const fileInput = document.getElementById('id_school_logo');
+            const fileNameDisplay = document.getElementById('file-name');
+            const logoPreview = document.getElementById('logo-preview');
+            const previewImage = document.getElementById('preview-image');
+            
+            if (fileInput) {
+                fileInput.addEventListener('change', function() {
+                    if (this.files && this.files[0]) {
+                        fileNameDisplay.textContent = this.files[0].name;
+                        
+                        // Show preview for images
+                        if (this.files[0].type.match('image.*')) {
+                            const reader = new FileReader();
+                            reader.onload = function(e) {
+                                previewImage.src = e.target.result;
+                                logoPreview.classList.remove('hidden');
+                            }
+                            reader.readAsDataURL(this.files[0]);
+                        }
+                    }
+                });
+            }
+
+            // Form submission
+            if (form) {
+                form.addEventListener('submit', function() {
+                    submitText.textContent = 'Creating Account...';
+                    submitSpinner.classList.remove('hidden');
+                    submitButton.disabled = true;
+                });
+            }
+        });
+    </script>
+</body>
+</html>

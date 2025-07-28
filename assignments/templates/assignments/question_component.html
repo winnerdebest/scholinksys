@@ -1,0 +1,86 @@
+<div class="question-card bg-white rounded-xl shadow-sm p-6">
+    <input type="hidden" id="question-id" value="{{ question.id }}">
+
+    <!-- Question Header -->
+    <div class="mb-6">
+        <div class="flex items-start space-x-3">
+            <div class="flex-shrink-0 mt-1">
+                <span class="inline-flex items-center justify-center h-8 w-8 rounded-full bg-purple-100 text-purple-800 font-medium">
+                    Q
+                </span>
+            </div>
+            <div>
+                <p class="text-lg font-semibold text-gray-800">{{ question.text }}</p>
+                {% if question.image %}
+                <div class="mt-3 rounded-lg overflow-hidden border border-gray-200">
+                    <img src="{{ question.image.url }}" alt="Question Image" class="w-full h-auto max-h-64 object-contain">
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Options Container -->
+    <div class="space-y-3">
+        <!-- Option A -->
+        <label class="option-item flex items-start p-4 border border-gray-200 rounded-lg hover:border-purple-300 hover:bg-purple-50 transition-colors cursor-pointer has-[:checked]:border-purple-500 has-[:checked]:bg-purple-50">
+            <input type="radio" name="answer" value="A" class="mt-1 mr-3 h-5 w-5 text-purple-600 border-gray-300 focus:ring-purple-500">
+            <div class="flex-1">
+                <span class="block font-medium text-gray-800">{{ question.option_a_text }}</span>
+                {% if question.option_a_image %}
+                <div class="mt-2 rounded-md overflow-hidden border border-gray-200">
+                    <img src="{{ question.option_a_image.url }}" alt="Option A" class="w-full h-auto max-h-40 object-contain">
+                </div>
+                {% endif %}
+            </div>
+        </label>
+
+        <!-- Option B -->
+        <label class="option-item flex items-start p-4 border border-gray-200 rounded-lg hover:border-purple-300 hover:bg-purple-50 transition-colors cursor-pointer has-[:checked]:border-purple-500 has-[:checked]:bg-purple-50">
+            <input type="radio" name="answer" value="B" class="mt-1 mr-3 h-5 w-5 text-purple-600 border-gray-300 focus:ring-purple-500">
+            <div class="flex-1">
+                <span class="block font-medium text-gray-800">{{ question.option_b_text }}</span>
+                {% if question.option_b_image %}
+                <div class="mt-2 rounded-md overflow-hidden border border-gray-200">
+                    <img src="{{ question.option_b_image.url }}" alt="Option B" class="w-full h-auto max-h-40 object-contain">
+                </div>
+                {% endif %}
+            </div>
+        </label>
+
+        <!-- Option C -->
+        <label class="option-item flex items-start p-4 border border-gray-200 rounded-lg hover:border-purple-300 hover:bg-purple-50 transition-colors cursor-pointer has-[:checked]:border-purple-500 has-[:checked]:bg-purple-50">
+            <input type="radio" name="answer" value="C" class="mt-1 mr-3 h-5 w-5 text-purple-600 border-gray-300 focus:ring-purple-500">
+            <div class="flex-1">
+                <span class="block font-medium text-gray-800">{{ question.option_c_text }}</span>
+                {% if question.option_c_image %}
+                <div class="mt-2 rounded-md overflow-hidden border border-gray-200">
+                    <img src="{{ question.option_c_image.url }}" alt="Option C" class="w-full h-auto max-h-40 object-contain">
+                </div>
+                {% endif %}
+            </div>
+        </label>
+
+        <!-- Option D -->
+        <label class="option-item flex items-start p-4 border border-gray-200 rounded-lg hover:border-purple-300 hover:bg-purple-50 transition-colors cursor-pointer has-[:checked]:border-purple-500 has-[:checked]:bg-purple-50">
+            <input type="radio" name="answer" value="D" class="mt-1 mr-3 h-5 w-5 text-purple-600 border-gray-300 focus:ring-purple-500">
+            <div class="flex-1">
+                <span class="block font-medium text-gray-800">{{ question.option_d_text }}</span>
+                {% if question.option_d_image %}
+                <div class="mt-2 rounded-md overflow-hidden border border-gray-200">
+                    <img src="{{ question.option_d_image.url }}" alt="Option D" class="w-full h-auto max-h-40 object-contain">
+                </div>
+                {% endif %}
+            </div>
+        </label>
+    </div>
+</div>
+
+<style>
+.option-item {
+    transition: all 0.2s ease;
+}
+.option-item input[type="radio"] {
+    transform: translateY(2px);
+}
+</style>

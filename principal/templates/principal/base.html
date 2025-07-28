@@ -1,0 +1,258 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Principal Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            200: '#bae6fd',
+                            300: '#7dd3fc',
+                            400: '#38bdf8',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            800: '#075985',
+                            900: '#0c4a6e',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <div class="w-64 bg-primary-800 text-white dark:bg-gray-800">
+            <div class="p-4 border-b border-primary-700 dark:border-gray-700 flex justify-between items-center">
+                <h2 class="text-xl font-bold flex items-center">
+                    <img src="{{ request.user.school.logo.url }}" alt="School Logo" class="h-8 w-8 object-cover rounded-full border"> {{ request.user.school.name }}
+                </h2>
+                <button id="theme-toggle" class="p-1 rounded-full focus:outline-none">
+                    <i class="fas fa-moon text-yellow-300 dark:hidden"></i>
+                    <i class="fas fa-sun text-yellow-300 hidden dark:inline"></i>
+                </button>
+            </div>
+            <div class="p-4">
+                <div class="space-y-2">
+                    <a href="{% url "principal:principal_dashboard" %}">
+                        <div class="p-3 hover:bg-primary-700 dark:hover:bg-gray-700 rounded-lg cursor-pointer flex items-center transition-colors">
+                            <i class="fas fa-tachometer-alt mr-3"></i> Dashboard
+                        </div>
+                    </a>
+
+                    <!-- Students Dropdown -->
+                    <div class="relative" x-data="{ open: false }">
+                        <div @click="open = !open" class="p-3 hover:bg-primary-700 dark:hover:bg-gray-700 rounded-lg cursor-pointer flex items-center justify-between transition-colors">
+                            <div class="flex items-center">
+                                <i class="fas fa-user-graduate mr-3"></i> Students
+                            </div>
+                            <i class="fas fa-chevron-down transition-transform" :class="{ 'transform rotate-180': open }"></i>
+                        </div>
+                        <div x-show="open" class="pl-8 mt-2 space-y-2">
+                            <a href="{% url "principal:create_student" %}">
+                                <div class="p-2 hover:bg-primary-700 dark:hover:bg-gray-700 rounded-lg cursor-pointer transition-colors">
+                                    Register Student
+                                </div>
+                            </a>
+                            <a href="{% url "principal:student_list" %}">
+                                <div class="p-2 hover:bg-primary-700 dark:hover:bg-gray-700 rounded-lg cursor-pointer transition-colors">
+                                    View Students
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Teachers Dropdown -->
+                    <div class="relative" x-data="{ open: false }">
+                        <div @click="open = !open" class="p-3 hover:bg-primary-700 dark:hover:bg-gray-700 rounded-lg cursor-pointer flex items-center justify-between transition-colors">
+                            <div class="flex items-center">
+                                <i class="fas fa-chalkboard-teacher mr-3"></i> Teachers
+                            </div>
+                            <i class="fas fa-chevron-down transition-transform" :class="{ 'transform rotate-180': open }"></i>
+                        </div>
+                        <div x-show="open" class="pl-8 mt-2 space-y-2">
+                            <a href="{% url "principal:create_teacher" %}">
+                                <div class="p-2 hover:bg-primary-700 dark:hover:bg-gray-700 rounded-lg cursor-pointer transition-colors">
+                                    Register Teacher
+                                </div>
+                            </a>
+                            <a href="{% url "principal:teacher_list" %}">
+                                <div class="p-2 hover:bg-primary-700 dark:hover:bg-gray-700 rounded-lg cursor-pointer transition-colors">
+                                    View Teachers
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Subjects Dropdown -->
+                    <div class="relative" x-data="{ open: false }">
+                        <div @click="open = !open" class="p-3 hover:bg-primary-700 dark:hover:bg-gray-700 rounded-lg cursor-pointer flex items-center justify-between transition-colors">
+                            <div class="flex items-center">
+                                <i class="fas fa-book mr-3"></i> Subjects
+                            </div>
+                            <i class="fas fa-chevron-down transition-transform" :class="{ 'transform rotate-180': open }"></i>
+                        </div>
+                        <div x-show="open" class="pl-8 mt-2 space-y-2">
+                            <a href="{% url "principal:create_subject" %}">
+                                <div class="p-2 hover:bg-primary-700 dark:hover:bg-gray-700 rounded-lg cursor-pointer transition-colors">
+                                    Create Subject
+                                </div>
+                            </a>
+                            <a href="{% url "principal:subject_list" %}">
+                                <div class="p-2 hover:bg-primary-700 dark:hover:bg-gray-700 rounded-lg cursor-pointer transition-colors">
+                                    View Subjects
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Classes Dropdown -->
+                    <div class="relative" x-data="{ open: false }">
+                        <div @click="open = !open" class="p-3 hover:bg-primary-700 dark:hover:bg-gray-700 rounded-lg cursor-pointer flex items-center justify-between transition-colors">
+                            <div class="flex items-center">
+                                <i class="fas fa-school mr-3"></i> Classes
+                            </div>
+                            <i class="fas fa-chevron-down transition-transform" :class="{ 'transform rotate-180': open }"></i>
+                        </div>
+                        <div x-show="open" class="pl-8 mt-2 space-y-2">
+                            <a href="{% url "principal:create_class" %}">
+                                <div class="p-2 hover:bg-primary-700 dark:hover:bg-gray-700 rounded-lg cursor-pointer transition-colors">
+                                    Create Class
+                                </div>
+                            </a>
+                            <a href="{% url "principal:class_list" %}">
+                                <div class="p-2 hover:bg-primary-700 dark:hover:bg-gray-700 rounded-lg cursor-pointer transition-colors">
+                                    View Classes
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+
+                    <a href="{% url "principal:grade_customize" %}">
+                        <div class="p-3 hover:bg-primary-700 dark:hover:bg-gray-700 rounded-lg cursor-pointer flex items-center transition-colors">
+                            <i class="fas fa-percentage mr-3"></i> Customize Grade
+                        </div>
+                    </a>
+                    <a href="{% url "principal:create_announcement" %}">
+                        <div class="p-3 hover:bg-primary-700 dark:hover:bg-gray-700 rounded-lg cursor-pointer flex items-center transition-colors">
+                            <i class="fas fa-bullhorn mr-3"></i> Announcements
+                        </div>
+                    </a>
+                    <a href="{% url "user_logout" %}">
+                        <div class="p-3 hover:bg-primary-700 dark:hover:bg-gray-700 rounded-lg cursor-pointer flex items-center transition-colors">
+                            <i class="fas fa-sign-out-alt mr-3"></i> Logout
+                        </div>
+                    </a>
+
+                    <!-- Fees & Revenue Section -->
+                    
+                </div>
+            </div>
+        </div>
+
+        <div class="flex-1 overflow-y-auto p-8">
+            <!-- Header -->
+            <div class="flex justify-between items-center mb-8 pb-4 border-b border-gray-200 dark:border-gray-700">
+                <h2 class="text-xl font-bold flex items-center space-x-3">
+                    {% if request.user.school.logo %}
+                        <img src="{{ request.user.school.logo.url }}" alt="School Logo" class="h-8 w-8 object-cover rounded-full border">
+                    {% endif %}
+                    <span>SchoLink - {{ request.user.school.name }}</span>
+                </h2>
+                <div class="flex items-center space-x-4">
+                    <div class="relative group">
+                        <i class="fas fa-bell text-gray-600 dark:text-gray-300 text-xl cursor-pointer"></i>
+                        <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">3</span>
+                        <div class="hidden group-hover:block absolute right-0 mt-2 w-64 bg-white dark:bg-gray-800 rounded-lg shadow-lg z-10 p-2">
+                            <div class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded">New student registration</div>
+                            <div class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded">Upcoming staff meeting</div>
+                            <div class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded">Exam schedule update</div>
+                        </div>
+                    </div>
+                    <div class="relative group">
+                        <a href="{% url "principal:settings" %}" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+                            <i class="fas fa-cog text-gray-600 dark:text-gray-300"></i>
+                        </a>
+                    </div>
+                    <div class="flex items-center relative group">
+                        <img src="{{ request.user.school.logo.url }}" alt="User" class="w-10 h-10 rounded-full mr-3">
+                        <span class="font-medium dark:text-white">{{ request.user.get_full_name|default:request.user.username }}</span>
+                        <i class="fas fa-chevron-down ml-2 text-gray-500 dark:text-gray-300"></i>
+                        <div class="hidden group-hover:block absolute right-0 top-full mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg z-10 p-2">
+                            
+                            <a href="{% url "user_logout" %}" class="block p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded">Logout</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        {% block content %}
+        
+        
+        {% endblock content %}
+
+
+        <script>
+            // Dark mode toggle
+            const themeToggle = document.getElementById('theme-toggle');
+            const html = document.documentElement;
+            
+            // Check for saved user preference or use system preference
+            if (localStorage.getItem('theme') === 'dark' || 
+                (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                html.classList.add('dark');
+            }
+            
+            themeToggle.addEventListener('click', () => {
+                html.classList.toggle('dark');
+                localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
+            });
+            
+            // Interactive sidebar menu
+            const menuItems = document.querySelectorAll('.p-3.hover\\:bg-primary-700');
+            menuItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    menuItems.forEach(i => i.classList.remove('bg-primary-700', 'dark:bg-gray-700'));
+                    item.classList.add('bg-primary-700', 'dark:bg-gray-700');
+                });
+            });
+            
+            // Simulate loading animation for stats cards
+            const statCards = document.querySelectorAll('.bg-white.rounded-lg.shadow.p-6.text-center');
+            statCards.forEach(card => {
+                const value = card.querySelector('.text-3xl');
+                const originalText = value.textContent;
+                value.textContent = '0';
+                
+                let counter = 0;
+                const target = parseInt(originalText.replace(/,/g, ''));
+                const increment = target / 20;
+                
+                const timer = setInterval(() => {
+                    counter += increment;
+                    if (counter >= target) {
+                        value.textContent = originalText;
+                        clearInterval(timer);
+                    } else {
+                        value.textContent = Math.floor(counter).toLocaleString();
+                    }
+                }, 50);
+            });
+        </script>
+
+    </body>
+</html>

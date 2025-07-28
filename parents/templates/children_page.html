@@ -1,0 +1,115 @@
+{% extends "parent_base.html" %}
+
+{% block title %}Parent Portal - My Children{% endblock %}
+
+{% block content %}
+<div class="space-y-4">
+    {% if children %}
+        {% for child in children %}
+            <!-- Child Card -->
+            <div class="bg-white dark:bg-gray-700 rounded-xl shadow-sm overflow-hidden">
+                <div class="p-4 flex items-center">
+                    <div class="w-16 h-16 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center text-blue-500 dark:text-blue-300 mr-4">
+                        {% if child.student.photo %}
+                            <img src="{{ child.student.photo.url }}" alt="{{ child.student.user.get_full_name }}" class="w-full h-full rounded-full object-cover">
+                        {% else %}
+                            <i class="fas fa-child text-2xl"></i>
+                        {% endif %}
+                    </div>
+                    <div class="flex-1">
+                        <h2 class="font-bold text-lg">{{ child.student.user.get_full_name }}</h2>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">
+                            {% if child.student.student_class %}
+                                {{ child.student.student_class.name }} | {{ child.student.student_class.school.name }}
+                            {% else %}
+                                Class not assigned
+                            {% endif %}
+                        </p>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-xs px-2 py-1 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded-full">Active</span>
+                    </div>
+                </div>
+                
+                <!-- Additional Information Section -->
+                <div class="border-t border-gray-200 dark:border-gray-600 px-4 py-3">
+                    <div class="grid grid-cols-2 gap-4 mb-3">
+                        <!-- Fees Status -->
+                        <div class="bg-gray-50 dark:bg-gray-600 p-2 rounded-lg">
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">School Fees</p>
+                            <div class="flex items-center">
+                                <span class="text-sm font-medium {% if child.fee_status == 'paid' %}text-green-600 dark:text-green-400{% elif child.fee_status == 'partial' %}text-yellow-600 dark:text-yellow-400{% else %}text-red-600 dark:text-red-400{% endif %} mr-2">
+                                    {{ child.fee_status|title }}
+                                </span>
+                                <span class="text-xs">{{ child.term.name }}</span>
+                            </div>
+                            <a href="#" class="text-xs text-primary mt-1 block">View Payment History</a>
+                        </div>
+                        
+                        <!-- Academic Performance -->
+                        <div class="bg-gray-50 dark:bg-gray-600 p-2 rounded-lg">
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">Academic Performance</p>
+                            {% if child.grade_summary %}
+                            <div class="flex items-center">
+                                <span class="text-sm font-medium mr-2">{{ child.grade_summary.average_score|floatformat:1 }}%</span>
+                                <div class="flex-1 bg-gray-200 dark:bg-gray-500 rounded-full h-2">
+                                    <div class="bg-yellow-500 h-2 rounded-full" style="width: {{ child.grade_summary.average_score }}%"></div>
+                                </div>
+                            </div>
+                            <p class="text-xs text-gray-500">Rank: {{ child.grade_summary.rank }}</p>
+                            {% else %}
+                            <p class="text-xs text-gray-500">No grades available</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <!-- Recent Grades -->
+                    <div class="mb-3">
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">Recent Grades</p>
+                        <div class="grid grid-cols-3 gap-2 text-center text-sm">
+                            {% for grade in child.recent_grades %}
+                            <div class="bg-blue-50 dark:bg-blue-900/30 p-1 rounded">
+                                <p>{{ grade.class_subject.subject.name }}</p>
+                                <p class="font-bold">{{ grade.total_score|floatformat:1 }}%</p>
+                            </div>
+                            {% empty %}
+                            <div class="col-span-3 text-center text-gray-500 text-xs">
+                                No recent grades available
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    
+                    <!-- Action Buttons -->
+                    <div class="border-t border-gray-200 dark:border-gray-600 px-4 py-3 flex justify-between">
+                        <a href="#" class="text-sm text-primary flex flex-col items-center">
+                            <i class="fas fa-book-open mb-1"></i>
+                            <span class="text-xs">Reports</span>
+                        </a>
+                    
+                        <a href="#" class="text-sm text-primary flex flex-col items-center">
+                            <i class="fas fa-wallet mb-1"></i>
+                            <span class="text-xs">Payments</span>
+                        </a>
+                    
+                        <a href="#" class="text-sm text-primary flex flex-col items-center">
+                            <i class="fas fa-chart-bar mb-1"></i>
+                            <span class="text-xs">Analytics</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <div class="bg-yellow-50 dark:bg-yellow-900/30 border-l-4 border-yellow-400 p-4">
+            <p class="text-yellow-700 dark:text-yellow-300">No children are currently associated with your account.</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+<!-- Add Child Button -->
+<div class="mt-6">
+    <button class="w-full py-3 bg-primary hover:bg-primary-hover text-white rounded-xl font-medium flex items-center justify-center">
+        <i class="fas fa-plus mr-2"></i> Add Another Child
+    </button>
+</div>

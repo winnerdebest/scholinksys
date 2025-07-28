@@ -1,0 +1,25 @@
+{% extends "principal/base.html" %}
+{% block content %}
+
+<h1 class="text-xl font-bold mb-4">
+    Change Teacher for {{ class_subject.subject.name }} in {{ class_subject.school_class.name }}
+</h1>
+
+<form method="POST" class="space-y-4 max-w-md">
+    {% csrf_token %}
+    <label class="block">
+        <span class="block font-medium mb-1">Select New Teacher</span>
+        <select name="teacher" class="w-full border rounded px-3 py-2">
+            {% for teacher in teachers %}
+            <option value="{{ teacher.user.id }}" {% if teacher.user.id == class_subject.teacher.id %}selected{% endif %}>
+                {{ teacher.user.get_full_name }}
+            </option>
+            {% endfor %}
+        </select>
+    </label>
+
+    <button class="bg-blue-600 text-white px-4 py-2 rounded" type="submit">Save Changes</button>
+    <a href="{% url 'principal:class_detail' class_subject.school_class.id %}" class="ml-4 text-gray-600">Cancel</a>
+</form>
+
+{% endblock %}

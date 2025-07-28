@@ -1,0 +1,152 @@
+{% extends "principal/base.html" %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Header -->
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-900 dark:text-white flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mr-3 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            Account Settings
+        </h1>
+        <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
+            Manage your personal and school information
+        </p>
+    </div>
+
+    <!-- Settings Tabs -->
+    {% include "settings/components/settings_tabs.html" with active_tab="personal" %}
+
+
+    <form method="post" enctype="multipart/form-data" class="space-y-8 divide-y divide-gray-200 dark:divide-gray-700">
+        {% csrf_token %}
+        
+        <!-- Personal Information Section -->
+        <div class="space-y-6 pt-6">
+            <div>
+                <h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-white">
+                    Personal Information
+                </h3>
+                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                    Update your personal details and contact information.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
+                {% for field in user_form %}
+                <div class="sm:col-span-3">
+                    <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                        {{ field.label }}
+                    </label>
+                    <div class="mt-1">
+                        {{ field }}
+                        {% if field.errors %}
+                            <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ field.errors|join:", " }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- School Information Section -->
+        <div class="space-y-6 pt-8">
+            <div>
+                <h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-white">
+                    School Information
+                </h3>
+                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                    Manage your school's profile and branding.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
+                {% for field in school_form %}
+                <div class="sm:col-span-3">
+                    <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                        {{ field.label }}
+                    </label>
+                    <div class="mt-1">
+                        {{ field }}
+                        {% if field.errors %}
+                            <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ field.errors|join:", " }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+                
+                <!-- Logo Upload -->
+                <div class="sm:col-span-6">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                        School Logo
+                    </label>
+                    <div class="mt-1 flex items-center">
+                        {% if school_form.instance.logo %}
+                        <img id="logo-preview" class="h-16 w-16 rounded-full object-cover mr-4 border border-gray-200 dark:border-gray-600" 
+                             src="{{ school_form.instance.logo.url }}" alt="School logo">
+                        {% else %}
+                        <span class="h-16 w-16 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-400">
+                            <svg class="h-8 w-8" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M4 5h13v7h2V5c0-1.103-.897-2-2-2H4c-1.103 0-2 .897-2 2v12c0 1.103.897 2 2 2h8v-2H4V5z"></path>
+                                <path d="m8 11-3 4h11l-4-6-3 4z"></path>
+                                <path d="M19 14h-2v3h-3v2h3v3h2v-3h3v-2h-3z"></path>
+                            </svg>
+                        </span>
+                        {% endif %}
+                        <div class="flex-1">
+                            <input type="file" name="logo" accept="image/*" class="hidden" id="logo-upload">
+                            <label for="logo-upload" class="cursor-pointer">
+                                <span class="rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 py-2 px-3 text-sm font-medium leading-4 text-gray-700 dark:text-gray-300 shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900">
+                                    Change
+                                </span>
+                            </label>
+                            <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                                PNG, JPG, GIF up to 2MB
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="pt-8">
+            <div class="flex justify-end gap-x-3">
+                <button type="reset" class="rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 py-2 px-4 text-sm font-medium text-gray-700 dark:text-gray-300 shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900">
+                    Cancel
+                </button>
+                <button type="submit" class="inline-flex justify-center rounded-md border border-transparent bg-blue-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900">
+                    Save Changes
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+    // Preview logo when selected
+    document.getElementById('logo-upload').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const preview = document.getElementById('logo-preview');
+                if (!preview) {
+                    const container = document.querySelector('.sm\\:col-span-6 .mt-1');
+                    const newPreview = document.createElement('img');
+                    newPreview.id = 'logo-preview';
+                    newPreview.className = 'h-16 w-16 rounded-full object-cover mr-4 border border-gray-200 dark:border-gray-600';
+                    newPreview.src = event.target.result;
+                    newPreview.alt = 'School logo preview';
+                    container.insertBefore(newPreview, container.firstChild);
+                } else {
+                    preview.src = event.target.result;
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+</script>
+{% endblock %}

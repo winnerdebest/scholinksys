@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scholink - Modern School Management System</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .hero-gradient {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #9333ea 100%);
+        }
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+    </style>
+</head>
+<body class="font-sans text-gray-800 dark:bg-gray-900 dark:text-gray-100">
+    <!-- Navigation -->
+    <nav class="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 flex items-center">
+                        <i class="fas fa-graduation-cap text-indigo-600 dark:text-indigo-400 text-2xl mr-2"></i>
+                        <span class="text-xl font-bold text-gray-900 dark:text-white">Serverlink - Edu</span>
+                    </div>
+                </div>
+                <div class="hidden md:ml-6 md:flex md:items-center md:space-x-8">
+                    <a href="#features" class="text-gray-900 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 px-3 py-2 text-sm font-medium">Features</a>
+                    <a href="#testimonials" class="text-gray-900 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 px-3 py-2 text-sm font-medium">Testimonials</a>
+                    <a href="#pricing" class="text-gray-900 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 px-3 py-2 text-sm font-medium">Pricing</a>
+                    <a href="#contact" class="text-gray-900 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 px-3 py-2 text-sm font-medium">Contact</a>
+                </div>
+                <div class="flex items-center">
+                    <a href="/login" class="text-gray-900 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 px-3 py-2 text-sm font-medium mr-4">Login</a>
+                    <a href="/register" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium">Get Started</a>
+                    <button id="theme-toggle" class="ml-4 p-2 rounded-full focus:outline-none">
+                        <i class="fas fa-moon text-gray-400 dark:hidden"></i>
+                        <i class="fas fa-sun text-yellow-400 hidden dark:block"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-gradient text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+            <div class="md:flex md:items-center md:justify-between">
+                <div class="md:w-1/2 mb-12 md:mb-0">
+                    <h1 class="text-4xl md:text-5xl font-bold mb-6 leading-tight">Revolutionizing School Management for the Digital Age</h1>
+                    <p class="text-xl mb-8 opacity-90">Scholink provides comprehensive, cloud-based solutions to streamline all aspects of school administration, student management, and communication.</p>
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        
+                        <a href="#features" class="border-2 border-white text-white hover:bg-white hover:text-indigo-600 px-6 py-3 rounded-lg text-lg font-semibold text-center transition duration-300">Explore Features</a>
+                    </div>
+                </div>
+                <div class="md:w-1/2 flex justify-center">
+                    <img src="https://images.unsplash.com/photo-1588072432836-e10032774350?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Students using tablets" class="w-full max-w-md rounded-lg shadow-xl">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Trusted By Section -->
+    <section class="bg-gray-50 dark:bg-gray-800 py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <p class="text-center text-gray-500 dark:text-gray-400 mb-8">Trusted by leading educational institutions worldwide</p>
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-8 items-center justify-center">
+                <div class="flex justify-center">
+                    <img src="https://upload.wikimedia.org/wikipedia/en/thumb/4/44/Greenwood_High_School_logo.png/150px-Greenwood_High_School_logo.png" alt="Greenwood Academy" class="h-12 opacity-70 dark:opacity-90">
+                </div>
+                <div class="flex justify-center">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/Sunrise_Elementary_School_logo.png/150px-Sunrise_Elementary_School_logo.png" alt="Sunrise School" class="h-12 opacity-70 dark:opacity-90">
+                </div>
+                <div class="flex justify-center">
+                    <img src="https://upload.wikimedia.org/wikipedia/en/thumb/8/8d/St_Mary%27s_College_Logo.svg/1200px-St_Mary%27s_College_Logo.svg.png" alt="St. Mary's" class="h-12 opacity-70 dark:opacity-90">
+                </div>
+                <div class="flex justify-center">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Cambridge_International_Logo.svg/1200px-Cambridge_International_Logo.svg.png" alt="Cambridge International" class="h-12 opacity-70 dark:opacity-90">
+                </div>
+                <div class="flex justify-center">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Oakridge_International_School_logo.svg/1200px-Oakridge_International_School_logo.svg.png" alt="Oakridge" class="h-12 opacity-70 dark:opacity-90">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-20 bg-white dark:bg-gray-900">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-4">Everything Your School Needs in One Platform</h2>
+                <p class="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">Scholink integrates all essential school management functions into a single, easy-to-use system.</p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Feature 1 -->
+                <div class="feature-card bg-gray-50 dark:bg-gray-800 p-8 rounded-xl transition duration-300">
+                    <div class="w-14 h-14 bg-indigo-100 dark:bg-indigo-900 rounded-lg flex items-center justify-center mb-6">
+                        <i class="fas fa-user-graduate text-indigo-600 dark:text-indigo-400 text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3">Student Management</h3>
+                    <p class="text-gray-600 dark:text-gray-400">Comprehensive student profiles, attendance tracking, behavior monitoring, and performance analytics all in one place.</p>
+                </div>
+                
+                <!-- Feature 2 -->
+                <div class="feature-card bg-gray-50 dark:bg-gray-800 p-8 rounded-xl transition duration-300">
+                    <div class="w-14 h-14 bg-indigo-100 dark:bg-indigo-900 rounded-lg flex items-center justify-center mb-6">
+                        <i class="fas fa-chalkboard-teacher text-indigo-600 dark:text-indigo-400 text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3">Teacher Portal</h3>
+                    <p class="text-gray-600 dark:text-gray-400">Lesson planning, gradebook, assignment distribution, and communication tools designed specifically for educators.</p>
+                </div>
+                
+                <!-- Feature 3 -->
+                <div class="feature-card bg-gray-50 dark:bg-gray-800 p-8 rounded-xl transition duration-300">
+                    <div class="w-14 h-14 bg-indigo-100 dark:bg-indigo-900 rounded-lg flex items-center justify-center mb-6">
+                        <i class="fas fa-users text-indigo-600 dark:text-indigo-400 text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3">Parent Engagement</h3>
+                    <p class="text-gray-600 dark:text-gray-400">Real-time updates, progress reports, and direct communication channels to keep parents informed and involved.</p>
+                </div>
+                
+                <!-- Feature 4 -->
+                <div class="feature-card bg-gray-50 dark:bg-gray-800 p-8 rounded-xl transition duration-300">
+                    <div class="w-14 h-14 bg-indigo-100 dark:bg-indigo-900 rounded-lg flex items-center justify-center mb-6">
+                        <i class="fas fa-tasks text-indigo-600 dark:text-indigo-400 text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3">Administration Tools</h3>
+                    <p class="text-gray-600 dark:text-gray-400">Streamline admissions, fee collection, staff management, and resource allocation with powerful admin features.</p>
+                </div>
+                
+                <!-- Feature 5 -->
+                <div class="feature-card bg-gray-50 dark:bg-gray-800 p-8 rounded-xl transition duration-300">
+                    <div class="w-14 h-14 bg-indigo-100 dark:bg-indigo-900 rounded-lg flex items-center justify-center mb-6">
+                        <i class="fas fa-chart-line text-indigo-600 dark:text-indigo-400 text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3">Advanced Analytics</h3>
+                    <p class="text-gray-600 dark:text-gray-400">Data-driven insights to help schools make informed decisions and improve educational outcomes.</p>
+                </div>
+                
+                <!-- Feature 6 -->
+                <div class="feature-card bg-gray-50 dark:bg-gray-800 p-8 rounded-xl transition duration-300">
+                    <div class="w-14 h-14 bg-indigo-100 dark:bg-indigo-900 rounded-lg flex items-center justify-center mb-6">
+                        <i class="fas fa-mobile-alt text-indigo-600 dark:text-indigo-400 text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3">Mobile Access</h3>
+                    <p class="text-gray-600 dark:text-gray-400">Full-featured mobile apps for students, parents, and staff to stay connected anytime, anywhere.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Demo Section -->
+    <section class="py-20 bg-gray-50 dark:bg-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="md:flex items-center">
+                <div class="md:w-1/2 mb-12 md:mb-0">
+                    <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-6">See Scholink in Action</h2>
+                    <p class="text-xl text-gray-600 dark:text-gray-400 mb-8">Our interactive demo will show you how Scholink can transform your school's operations and communication.</p>
+                    <a href="#" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg text-lg font-semibold inline-block">Request a Live Demo</a>
+                </div>
+                <div class="md:w-1/2">
+                    <div class="relative rounded-xl overflow-hidden shadow-xl">
+                        <img src="https://images.unsplash.com/photo-1581094794329-c8112a89af12?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Teacher using digital platform" class="w-full">
+                        <div class="absolute inset-0 bg-indigo-600 opacity-20"></div>
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <button class="bg-white bg-opacity-90 hover:bg-opacity-100 rounded-full w-16 h-16 flex items-center justify-center">
+                                <i class="fas fa-play text-indigo-600 text-2xl"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section id="testimonials" class="py-20 bg-white dark:bg-gray-900">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-4">What Our Customers Say</h2>
+                <p class="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">Schools around the world are transforming their operations with Scholink.</p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Testimonial 1 -->
+                <div class="bg-gray-50 dark:bg-gray-800 p-8 rounded-xl shadow-sm">
+                    <div class="flex items-center mb-6">
+                        <img src="https://www.gravatar.com/avatar/?d=mp&s=128" alt="Sarah Johnson" class="w-12 h-12 rounded-full mr-4">
+                        <div>
+                            <h4 class="font-bold text-gray-900 dark:text-white">Sarah Johnson</h4>
+                            <p class="text-gray-600 dark:text-gray-400">Principal, Greenwood Academy</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-700 dark:text-gray-300 italic">"Serverlink has completely transformed how we manage our school. The parent engagement features alone have improved communication by 200%."</p>
+                    <div class="mt-4 text-yellow-400">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                </div>
+                
+                <!-- Testimonial 2 -->
+                <div class="bg-gray-50 dark:bg-gray-800 p-8 rounded-xl shadow-sm">
+                    <div class="flex items-center mb-6">
+                        <img src="https://www.gravatar.com/avatar/?d=mp&s=128" alt="Michael Chen" class="w-12 h-12 rounded-full mr-4">
+                        <div>
+                            <h4 class="font-bold text-gray-900 dark:text-white">Michael Chen</h4>
+                            <p class="text-gray-600 dark:text-gray-400">IT Director, Sunrise School</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-700 dark:text-gray-300 italic">"Implementation was seamless, and the support team was exceptional. Our teachers love the intuitive interface and powerful features."</p>
+                    <div class="mt-4 text-yellow-400">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                </div>
+                
+                <!-- Testimonial 3 -->
+                <div class="bg-gray-50 dark:bg-gray-800 p-8 rounded-xl shadow-sm">
+                    <div class="flex items-center mb-6">
+                        <img src="https://www.gravatar.com/avatar/?d=mp&s=128" alt="Blank Profile" class="w-12 h-12 rounded-full mr-4">
+
+                        <div>
+                            <h4 class="font-bold text-gray-900 dark:text-white">Priya Patel</h4>
+                            <p class="text-gray-600 dark:text-gray-400">Parent, St. Mary's School</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-700 dark:text-gray-300 italic">"As a working parent, the mobile app keeps me connected to my child's progress. I can't imagine going back to the old paper reports."</p>
+                    <div class="mt-4 text-yellow-400">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star-half-alt"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-20 hero-gradient text-white">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="text-3xl font-bold mb-6">Ready to Transform Your School?</h2>
+            <p class="text-xl opacity-90 mb-8">Join thousands of educational institutions using Scholink to streamline their operations and enhance learning experiences.</p>
+            <div class="flex flex-col sm:flex-row justify-center gap-4">
+                
+                <a href="#contact" class="border-2 border-white text-white hover:bg-white hover:text-indigo-600 px-8 py-4 rounded-lg text-lg font-semibold transition duration-300">Request a Demo</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-300 py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-4 gap-8">
+                <div class="md:col-span-2">
+                    <div class="flex items-center mb-4">
+                        <i class="fas fa-graduation-cap text-indigo-400 text-2xl mr-2"></i>
+                        <span class="text-xl font-bold text-white">Serverlink - Edu</span>
+                    </div>
+                    <p class="mb-4">Empowering educational institutions with comprehensive, cloud-based school management solutions.</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="text-white font-medium mb-4">Product</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#features" class="hover:text-white">Features</a></li>
+                        <li><a href="#pricing" class="hover:text-white">Pricing</a></li>
+                        <li><a href="#" class="hover:text-white">Integrations</a></li>
+                        <li><a href="#" class="hover:text-white">Updates</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-white font-medium mb-4">Company</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="hover:text-white">About Us</a></li>
+                        <li><a href="#" class="hover:text-white">Careers</a></li>
+                        <li><a href="#" class="hover:text-white">Blog</a></li>
+                        <li><a href="#contact" class="hover:text-white">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
+                <p class="text-gray-500 text-sm mb-4 md:mb-0">© 2023 Scholink. All rights reserved.</p>
+                <div class="flex space-x-6">
+                    <a href="#" class="text-gray-500 hover:text-gray-300 text-sm">Privacy Policy</a>
+                    <a href="#" class="text-gray-500 hover:text-gray-300 text-sm">Terms of Service</a>
+                    <a href="#" class="text-gray-500 hover:text-gray-300 text-sm">Cookie Policy</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Dark mode toggle script -->
+    <script>
+        const themeToggle = document.getElementById('theme-toggle');
+        const html = document.documentElement;
+        
+        // Check for saved user preference or use system preference
+        if (localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            html.classList.add('dark');
+        } else {
+            html.classList.remove('dark');
+        }
+        
+        // Toggle theme on button click
+        themeToggle.addEventListener('click', () => {
+            html.classList.toggle('dark');
+            localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
+        });
+    </script>
+</body>
+</html>

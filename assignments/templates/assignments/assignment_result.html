@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+
+{% block content %}
+<br>
+<br>
+<br>
+
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <!-- Results Header Card -->
+    <div class="bg-white rounded-xl shadow-sm p-5 mb-6">
+        <h1 class="text-2xl sm:text-3xl font-bold text-gray-800 mb-3 text-center">{{ assignment.class_subject }} - Results</h1>
+        
+        <!-- Score Display -->
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-4 mb-4">
+            <!-- Radial Progress for Desktop -->
+            <div class="hidden sm:block radial-progress text-purple-600" 
+                 style="--value:{{ score_percent|floatformat:0 }}; --size:7rem; --thickness:10px;">
+                <span class="text-xl font-bold">{{ score_percent|floatformat:0 }}%</span>
+            </div>
+            
+            <!-- Linear Progress for Mobile -->
+            <div class="w-full sm:hidden">
+                <div class="flex justify-between mb-1">
+                    <span class="text-lg font-bold text-purple-700">{{ score_percent|floatformat:0 }}%</span>
+                    <span class="text-gray-600">{{ correct_count }}/{{ total_questions }}</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2.5">
+                    <div class="bg-purple-600 h-2.5 rounded-full" 
+                         style="width: {{ score_percent|floatformat:0 }}%"></div>
+                </div>
+            </div>
+            
+            <div class="text-center sm:text-left">
+                <p class="text-gray-600 mb-2">
+                    <span class="font-bold text-purple-700">{{ correct_count }}</span> correct answers
+                </p>
+                <div class="flex justify-center sm:justify-start gap-3">
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                        {{ correct_count }} Correct
+                    </span>
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                        {{ total_questions|add:"-correct_count" }} Incorrect
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Questions Breakdown -->
+
+    <!--<div class="mb-8">
+        <h2 class="text-xl font-semibold text-gray-800 mb-4 px-2">Question Review</h2>
+        
+        <div class="space-y-4">
+            {% for item in result_details %}
+            <div class="bg-white rounded-lg shadow-xs border-l-4 {% if item.is_correct %}border-green-500{% else %}border-red-500{% endif %} overflow-hidden">
+                <div class="p-4">
+                    
+                    <div class="flex items-start">
+                        <div class="mr-3 flex-shrink-0">
+                            <span class="inline-flex items-center justify-center h-6 w-6 rounded-full 
+                                {% if item.is_correct %}bg-green-100 text-green-800{% else %}bg-red-100 text-red-800{% endif %} 
+                                text-sm font-medium">
+                                {{ forloop.counter }}
+                            </span>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <p class="font-medium text-gray-800 break-words">{{ item.question.text }}</p>
+                            {% if item.question.image %}
+                            <div class="mt-2 max-w-full">
+                                <img src="{{ item.question.image.url }}" class="rounded-md border border-gray-200 max-h-40 object-contain mx-auto">
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    
+                    <div class="mt-3 pl-9 space-y-2">
+                        <div class="flex flex-wrap items-center gap-1">
+                            <span class="text-sm text-gray-500 whitespace-nowrap">Your answer:</span>
+                            <div class="flex items-center">
+                                <span class="{% if item.is_correct %}text-green-700{% else %}text-red-700{% endif %} font-medium break-all">
+                                    {% with sa=item.student_answer question=item.question %}
+                                        {% if sa == "A" %}
+                                            {{ question.option_a }}
+                                        {% elif sa == "B" %}
+                                            {{ question.option_b }}
+                                        {% elif sa == "C" %}
+                                            {{ question.option_c }}
+                                        {% elif sa == "D" %}
+                                            {{ question.option_d }}
+                                        {% else %}
+                                            No answer
+                                        {% endif %}
+                                    {% endwith %}
+                                </span>
+                                {% if item.is_correct %}
+                                <svg class="ml-1 h-4 w-4 text-green-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                </svg>
+                                {% else %}
+                                <svg class="ml-1 h-4 w-4 text-red-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        {% if not item.is_correct %}
+                        <div class="flex flex-wrap items-center gap-1">
+                            <span class="text-sm text-gray-500 whitespace-nowrap">Correct answer:</span>
+                            <span class="text-green-700 font-medium break-all">
+                                {% with ca=item.correct_answer question=item.question %}
+                                    {% if ca == "A" %}
+                                        {{ question.option_a }}
+                                    {% elif ca == "B" %}
+                                        {{ question.option_b }}
+                                    {% elif ca == "C" %}
+                                        {{ question.option_c }}
+                                    {% elif ca == "D" %}
+                                        {{ question.option_d }}
+                                    {% endif %}
+                                {% endwith %}
+                            </span>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>-->
+</div>
+
+<style>
+/* Radial progress bar - hidden on mobile */
+.radial-progress {
+    --value:0;
+    --size:7rem;
+    --thickness:10px;
+    appearance: none;
+    position: relative;
+    width: var(--size);
+    height: var(--size);
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: 
+        radial-gradient(
+            circle,
+            transparent calc(var(--size) / 2 - var(--thickness)),
+            currentColor 0 calc(var(--size) / 2)
+        ),
+        conic-gradient(
+            currentColor calc(var(--value) * 1%),
+            transparent 0
+        );
+}
+@media (max-width: 640px) {
+    .radial-progress {
+        display: none;
+    }
+}
+</style>
+{% endblock %}

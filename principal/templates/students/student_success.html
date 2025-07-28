@@ -1,0 +1,82 @@
+{% extends "principal/base.html" %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8 max-w-4xl">
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
+        <!-- Success Header -->
+        <div class="bg-green-600 dark:bg-green-800 px-6 py-4">
+            <h1 class="text-2xl font-bold text-white">Student Registration Successful!</h1>
+            <p class="text-green-100 dark:text-green-200">The student has been successfully registered in the system</p>
+        </div>
+
+        <!-- Credential Alert -->
+        <div class="p-4 m-6 bg-yellow-50 dark:bg-yellow-900 border-l-4 border-yellow-400 rounded-lg">
+            <div class="flex items-center">
+                <div class="flex-shrink-0">
+                    <i class="fas fa-key text-yellow-400"></i>
+                </div>
+                <div class="ml-3">
+                    <h3 class="text-sm font-medium text-yellow-800 dark:text-yellow-200">Login Credentials</h3>
+                    <div class="mt-2 text-sm text-yellow-700 dark:text-yellow-300">
+                        <p><strong>Username:</strong> {{ username }}</p>
+                        <p><strong>Password:</strong> {{ password }}</p>
+                    </div>
+                    <div class="mt-2">
+                        <p class="text-xs text-yellow-600 dark:text-yellow-400">
+                            Please save or share these credentials securely with the student/guardian
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Student Information -->
+        <div class="p-6 space-y-6">
+            <!-- Basic Information -->
+            <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+                <h2 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">Student Information</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="space-y-2">
+                        <div class="flex items-center">
+                            <span class="text-sm font-medium text-gray-500 dark:text-gray-400 w-32">Full Name:</span>
+                            <span class="text-sm text-gray-900 dark:text-white">{{ student.user.first_name }} {{ student.user.last_name }}</span>
+                        </div>
+                        <div class="flex items-center">
+                            <span class="text-sm font-medium text-gray-500 dark:text-gray-400 w-32">Email:</span>
+                            <span class="text-sm text-gray-900 dark:text-white">{{ student.user.email }}</span>
+                        </div>
+                        <div class="flex items-center">
+                            <span class="text-sm font-medium text-gray-500 dark:text-gray-400 w-32">Phone:</span>
+                            <span class="text-sm text-gray-900 dark:text-white">{{ student.phone_number|default:"Not provided" }}</span>
+                        </div>
+                    </div>
+                    <div class="space-y-2">
+                        <div class="flex items-center">
+                            <span class="text-sm font-medium text-gray-500 dark:text-gray-400 w-32">Class:</span>
+                            <span class="text-sm text-gray-900 dark:text-white">{{ student.student_class.name }}</span>
+                        </div>
+                        {% if student.photo %}
+                        <div class="flex items-center">
+                            <span class="text-sm font-medium text-gray-500 dark:text-gray-400 w-32">Photo:</span>
+                            <span class="text-sm text-green-600 dark:text-green-400">Uploaded</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="flex justify-end space-x-4 pt-4 border-t border-gray-200 dark:border-gray-600">
+                <a href="{% url 'principal:student_list' %}" 
+                    class="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors duration-200 flex items-center">
+                    <i class="fas fa-list mr-2"></i> View All Students
+                </a>
+                <a href="{% url 'principal:create_student' %}" 
+                    class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 flex items-center">
+                    <i class="fas fa-plus mr-2"></i> Register Another Student
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

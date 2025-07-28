@@ -1,0 +1,52 @@
+{% extends "principal/base.html" %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-md dark:bg-gray-800">
+    <h2 class="text-2xl font-bold mb-6 text-gray-800 dark:text-white">
+        {% if subject %}Edit{% else %}Create{% endif %} Subject
+    </h2>
+    
+    <form method="post" class="space-y-4">
+        {% csrf_token %}
+        
+        <div>
+            <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Name <span class="text-red-500">*</span>
+            </label>
+            <input type="text" id="name" name="name" value="{{ subject.name|default_if_none:'' }}"
+                   class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
+                   required>
+        </div>
+        
+        <div>
+            <label for="code" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Code
+            </label>
+            <input type="text" id="code" name="code" value="{{ subject.code|default_if_none:'' }}"
+                   class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400">
+        </div>
+        
+        <div>
+            <label for="description" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Description
+            </label>
+            <textarea id="description" name="description" rows="4"
+                      class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400">{{ subject.description|default_if_none:'' }}</textarea>
+        </div>
+        
+        <div class="pt-2">
+            <button type="submit"
+                    class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:bg-indigo-700 dark:hover:bg-indigo-600">
+                {% if subject %}Update{% else %}Create{% endif %}
+            </button>
+            
+            {% if subject %}
+            <a href="{% url 'principal:subject_list' %}"
+               class="ml-2 inline-flex justify-center py-2 px-4 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:bg-gray-600 dark:text-white dark:border-gray-600 dark:hover:bg-gray-500">
+                Cancel
+            </a>
+            {% endif %}
+        </div>
+    </form>
+</div>
+{% endblock %}

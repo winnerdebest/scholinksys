@@ -1,0 +1,124 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto bg-white dark:bg-gray-900 shadow rounded-lg p-6 mt-6">
+  <h1 class="text-2xl font-semibold text-purple-700 dark:text-purple-400 mb-4">Edit Assignment - {{ assignment.name }}</h1>
+
+  <form method="POST" enctype="multipart/form-data" class="space-y-6" id="exam-form">
+    {% csrf_token %}
+
+    <!-- Exam Fields -->
+    {% if messages %}
+    <ul class="mb-4">
+      {% for message in messages %}
+        <li class="text-{{ message.tags }}-600">{{ message }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+    <div class="grid grid-cols-1 gap-4">
+      {{ form.non_field_errors }}
+      {% for field in form %}
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-200">{{ field.label }}</label>
+          {{ field }}
+          {% if field.help_text %}
+            <p class="text-xs text-gray-500 dark:text-gray-400">{{ field.help_text }}</p>
+          {% endif %}
+          {% for error in field.errors %}
+            <p class="text-red-500 text-sm">{{ error }}</p>
+          {% endfor %}
+        </div>
+      {% endfor %}
+    </div>
+
+    <hr class="my-6 border-t dark:border-gray-700">
+
+    <!-- Questions -->
+<h2 class="text-xl font-semibold text-gray-800 dark:text-gray-100">Questions</h2>
+
+{{ question_formset.management_form }}
+
+<div id="questions-container" class="space-y-4">
+  {% for form in question_formset %}
+    <div class="question-form border p-4 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700 relative">
+      <!-- Hidden ID field for Django to bind formset forms properly -->
+      {{ form.id }}
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {% for field in form.visible_fields %}
+          <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-200">{{ field.label }}</label>
+            {{ field }}
+            {% for error in field.errors %}
+              <p class="text-red-500 text-sm">{{ error }}</p>
+            {% endfor %}
+          </div>
+        {% endfor %}
+      </div>
+      {% if form.instance.pk %}
+        <div class="mt-2">
+          <label class="inline-flex items-center">
+            {{ form.DELETE }} <span class="ml-2 text-sm text-red-600">Mark for deletion</span>
+          </label>
+        </div>
+      {% endif %}
+    </div>
+  {% endfor %}
+</div>
+
+<!-- Empty Form Template -->
+<template id="empty-form-template">
+  <div class="question-form border p-4 rounded-lg bg-gray-100 dark:bg-gray-800 dark:border-gray-700 relative">
+    <!-- Hidden ID field for dynamically added forms -->
+    {{ question_formset.empty_form.id }}
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      {% for field in question_formset.empty_form.visible_fields %}
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-200">{{ field.label }}</label>
+          {{ field }}
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</template>
+
+
+    <!-- Add Button -->
+    <div class="flex justify-end mt-4">
+      <button type="button"
+              id="add-question"
+              class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded text-sm font-medium">
+        + Add Question
+      </button>
+    </div>
+
+    <!-- Footer Buttons -->
+    <div class="flex justify-between mt-6">
+      <a href="{% url 'teacher:class_subject_detail' class_subject.id %}"
+         class="px-4 py-2 bg-gray-200 dark:bg-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 rounded text-sm font-medium">
+        Cancel
+      </a>
+      <button type="submit"
+              class="px-6 py-2 bg-blue-600 hover:bg-purple-700 text-white text-sm font-semibold rounded">
+        Save Changes
+      </button>
+    </div>
+  </form>
+</div>
+
+<!-- JavaScript -->
+<script>
+  const addBtn = document.getElementById('add-question');
+  const container = document.getElementById('questions-container');
+  const emptyFormTemplate = document.getElementById('empty-form-template').innerHTML;
+  const totalForms = document.getElementById('id_questions-TOTAL_FORMS');
+
+  addBtn.addEventListener('click', () => {
+    const newFormIndex = parseInt(totalForms.value);
+    const newFormHTML = emptyFormTemplate.replace(/__prefix__/g, newFormIndex);
+    container.insertAdjacentHTML('beforeend', newFormHTML);
+    totalForms.value = newFormIndex + 1;
+  });
+</script>
+{% endblock %}

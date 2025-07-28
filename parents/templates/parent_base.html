@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Parent Portal{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4f46e5',
+                        'primary-hover': '#4338ca',
+                    }
+                }
+            }
+        }
+    </script>
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100 min-h-screen">
+    <!-- Mobile App Container -->
+    <div class="max-w-md mx-auto bg-white dark:bg-gray-800 min-h-screen shadow-lg flex flex-col">
+        <!-- Header -->
+        <header class="bg-primary text-white p-4 sticky top-0 z-10">
+            <div class="flex justify-between items-center">
+                <h1 class="text-xl font-bold">Parent Portal</h1>
+                <div class="flex items-center space-x-3">
+                    <button id="theme-toggle" class="text-white">
+                        <i class="fas fa-moon dark:hidden"></i>
+                        <i class="fas fa-sun hidden dark:inline"></i>
+                    </button>
+                    <div class="w-8 h-8 rounded-full bg-white text-primary flex items-center justify-center font-bold">
+                        JP
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-4 overflow-y-auto">
+            {% block content %}
+            
+            {% endblock %}
+        </main>
+
+        <!-- Bottom Navigation -->
+        <nav class="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 flex justify-around p-3 sticky bottom-0">
+            <a href="{% url 'parents:parents_dashboard' %}" class="{% if request.resolver_match.url_name == 'parents_dashboard' %}text-primary{% else %}text-gray-500 dark:text-gray-400{% endif %} flex flex-col items-center">
+                <i class="fas fa-home"></i>
+                <span class="text-xs mt-1">Home</span>
+            </a>
+            <a href="{% url 'parents:children_page' %}" class="{% if request.resolver_match.url_name == 'children_page' %}text-primary{% else %}text-gray-500 dark:text-gray-400{% endif %} flex flex-col items-center">
+                <i class="fas fa-child"></i>
+                <span class="text-xs mt-1">Children</span>
+            </a>
+            <a href="{% url 'parents:payments_page' %}" class="{% if request.resolver_match.url_name == 'payments_page' %}text-primary{% else %}text-gray-500 dark:text-gray-400{% endif %} flex flex-col items-center">
+                <i class="fas fa-money-bill-wave"></i>
+                <span class="text-xs mt-1">Payments</span>
+            </a>
+            <a href="{% url 'parents:messages' %}" class="{% if request.resolver_match.url_name == 'messages_page' %}text-primary{% else %}text-gray-500 dark:text-gray-400{% endif %} flex flex-col items-center">
+                <i class="fas fa-envelope"></i>
+                <span class="text-xs mt-1">Messages</span>
+            </a>
+        </nav>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        const html = document.documentElement;
+
+        themeToggle.addEventListener('click', () => {
+            html.classList.toggle('dark');
+            localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
+        });
+
+        // Check for saved theme preference
+        if (localStorage.getItem('theme') === 'light') {
+            html.classList.remove('dark');
+        }
+    </script>
+    
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,214 @@
+{% extends "exams/base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto bg-white p-8 rounded-xl shadow-md">
+    <!-- Exam Header -->
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-800">{{ exam.title }}</h1>
+            <p class="text-gray-600 mt-1">Total questions: {{ questions|length }}</p>
+        </div>
+        <div class="flex items-center mt-4 md:mt-0">
+            <div class="bg-blue-100 text-blue-800 px-4 py-2 rounded-full flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span id="timer" class="font-semibold">{{ exam.duration_minutes }}:00</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Progress Indicator -->
+    <div class="mb-6">
+        <div class="flex justify-between text-sm text-gray-600 mb-1">
+            <span>Question <span id="current-question">1</span> of {{ questions|length }}</span>
+            <span id="progress-percent">0%</span>
+        </div>
+        <div class="w-full bg-gray-200 rounded-full h-2.5">
+            <div id="progress-bar" class="bg-blue-600 h-2.5 rounded-full" style="width: 0%"></div>
+        </div>
+    </div>
+
+    <!-- Question Display Area -->
+    <div id="question-container" class="bg-gray-50 p-6 rounded-lg border border-gray-200 mb-6">
+        {% include 'exams/question_component.html' with question=questions.0 %}
+    </div>
+
+    <!-- Navigation Controls -->
+    <div class="flex flex-col-reverse sm:flex-row justify-between gap-4">
+        <div class="flex gap-2">
+            <button id="prev-btn" class="bg-gray-200 hover:bg-gray-300 px-5 py-2.5 text-gray-700 rounded-lg transition flex items-center" disabled>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                </svg>
+                Previous
+            </button>
+            <button id="next-btn" class="bg-blue-600 hover:bg-blue-700 px-5 py-2.5 text-white rounded-lg transition flex items-center">
+                Next
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+            </button>
+        </div>
+        
+        <button id="submit-btn" class="bg-green-600 hover:bg-green-700 px-6 py-2.5 text-white rounded-lg transition font-medium hidden">
+            Submit Exam
+        </button>
+    </div>
+
+    <!-- Question Navigation Grid -->
+    <div class="mt-8">
+        <h3 class="text-lg font-medium text-gray-700 mb-3">Question Navigation</h3>
+        <div id="question-grid" class="grid grid-cols-5 sm:grid-cols-8 md:grid-cols-10 gap-2">
+            {% for i in questions %}
+            <button data-index="{{ forloop.counter0 }}" class="question-num-btn w-10 h-10 rounded-full border {% if forloop.first %}bg-blue-100 border-blue-500{% else %}border-gray-300 hover:border-blue-400{% endif %} transition">
+                {{ forloop.counter }}
+            </button>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<script>
+    let timeLeft = {{ exam.duration_minutes }} * 60;
+    let questionIndex = 0;
+    const totalQuestions = {{ questions|length }};
+    let allAnswers = {};
+
+    function updateTimer() {
+        let minutes = Math.floor(timeLeft / 60);
+        let seconds = timeLeft % 60;
+        document.getElementById("timer").textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        
+        if (timeLeft <= 0) {
+            alert("Time is up! Submitting exam...");
+            document.getElementById("submit-btn").click();
+        }
+        timeLeft--;
+    }
+    setInterval(updateTimer, 1000);
+
+    function updateNavigation() {
+        // Update progress
+        const progress = Math.round(((questionIndex + 1) / totalQuestions) * 100);
+        document.getElementById("progress-bar").style.width = `${progress}%`;
+        document.getElementById("progress-percent").textContent = `${progress}%`;
+        document.getElementById("current-question").textContent = questionIndex + 1;
+        
+        // Update button states
+        document.getElementById("prev-btn").disabled = questionIndex === 0;
+        document.getElementById("next-btn").disabled = questionIndex === totalQuestions - 1;
+        document.getElementById("submit-btn").classList.toggle("hidden", questionIndex !== totalQuestions - 1);
+        
+        // Update question grid highlights
+        document.querySelectorAll('.question-num-btn').forEach((btn, index) => {
+            btn.classList.toggle('bg-blue-100', index === questionIndex);
+            btn.classList.toggle('border-blue-500', index === questionIndex);
+            btn.classList.toggle('border-gray-300', index !== questionIndex);
+        });
+    }
+
+    function loadQuestion(index) {
+        fetch(`/exam/{{ exam.id }}/question/${index}/`)
+        .then(response => response.text())
+        .then(html => {
+            document.getElementById("question-container").innerHTML = html;
+            questionIndex = index;
+            updateNavigation();
+            
+            // Add event listeners to the newly loaded radio buttons
+            document.querySelectorAll(`#question-container input[type='radio']`).forEach(radio => {
+                radio.addEventListener('change', function() {
+                    let questionId = this.name.split("_")[1];
+                    allAnswers[questionId] = this.value;
+                    
+                    // Also update the question button to show it's been answered
+                    const questionNumber = Array.from(document.querySelectorAll('.question-num-btn'))
+                        .find(btn => parseInt(btn.dataset.index) === index);
+                    if (questionNumber) {
+                        questionNumber.classList.add('bg-green-100', 'border-green-500');
+                    }
+                });
+                
+                // If this question has a saved answer, restore it
+                let questionId = radio.name.split("_")[1];
+                if (allAnswers[questionId] === radio.value) {
+                    radio.checked = true;
+                }
+            });
+        });
+    }
+
+    // Navigation event listeners
+    document.getElementById("next-btn").addEventListener("click", () => {
+        if (questionIndex < totalQuestions - 1) {
+            loadQuestion(questionIndex + 1);
+        }
+    });
+
+    document.getElementById("prev-btn").addEventListener("click", () => {
+        if (questionIndex > 0) {
+            loadQuestion(questionIndex - 1);
+        }
+    });
+
+    // Question grid navigation
+    document.querySelectorAll('.question-num-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            loadQuestion(parseInt(btn.dataset.index));
+        });
+    });
+
+    // Initialize
+    updateNavigation();
+
+    // For saving results 
+    document.getElementById("submit-btn").addEventListener("click", function () {
+        console.log("Collected Answers:", allAnswers);
+        
+        if (Object.keys(allAnswers).length === 0) {
+            alert("No answers selected!");
+            return;
+        }
+        
+        fetch("{% url 'save-answer' %}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": "{{ csrf_token }}"
+            },
+            body: JSON.stringify({ answers: allAnswers })
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log("Server Response:", data);
+            
+            if (data.error) {
+                alert("Error submitting exam: " + data.error);
+            } else {
+                alert("Exam submitted successfully!");
+                window.location.href = "/exam/{{ exam.id }}/result/";
+            }
+        })
+        .catch(error => console.error("Network error:", error));
+    });
+    
+    
+    
+    
+    
+    
+    
+</script>
+
+<style>
+    .question-num-btn {
+        transition: all 0.2s ease;
+    }
+    .question-num-btn:hover:not(.bg-blue-100) {
+        background-color: #f0f7ff;
+    }
+    
+</style>
+{% endblock %}

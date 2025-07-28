@@ -1,0 +1,182 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<br>
+<br>
+
+
+<div class="max-w-4xl mx-auto p-6 bg-white rounded-xl shadow-lg mt-8">
+    <!-- Header Section -->
+    <div class="mb-6 border-b border-gray-200 pb-4">
+        <div class="flex justify-between items-start">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-800">{{ assignment.title }}</h1>
+                <p class="text-sm text-gray-500 mt-1">Complete all questions to submit your assignment</p>
+            </div>
+            <div class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm font-medium">
+                Question <span id="current-question">1</span>/{{ questions|length }}
+            </div>
+        </div>
+        
+        <!-- Progress Bar -->
+        <div class="mt-4">
+            <div class="w-full bg-gray-200 rounded-full h-2.5">
+                <div id="progress-bar" class="bg-purple-600 h-2.5 rounded-full" style="width: 0%"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Question Container -->
+    <div id="question-container" 
+         hx-get="{% url 'get-assignment-question' assignment.id 0 %}" 
+         hx-trigger="load" 
+         hx-target="#question-container" 
+         hx-swap="innerHTML"
+         class="mb-8 p-6 bg-gray-50 rounded-lg transition-all duration-300">
+        <!-- Question content will be loaded here -->
+        <div class="animate-pulse flex space-x-4">
+            <div class="flex-1 space-y-4 py-1">
+                <div class="h-4 bg-gray-300 rounded w-3/4"></div>
+                <div class="space-y-2">
+                    <div class="h-4 bg-gray-300 rounded"></div>
+                    <div class="h-4 bg-gray-300 rounded w-5/6"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation Controls -->
+    <div class="flex justify-between items-center mt-8">
+        <button id="prev-btn" 
+                class="flex items-center px-5 py-2.5 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                disabled>
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+            </svg>
+            Previous
+        </button>
+
+        <button id="next-btn" 
+                class="flex items-center px-5 py-2.5 text-white bg-purple-600 rounded-lg hover:bg-purple-700 disabled:bg-purple-400 disabled:cursor-not-allowed transition-colors">
+            Next
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+            </svg>
+        </button>
+    </div>
+
+    <!-- Submit Button -->
+    <button id="submit-btn" 
+            class="w-full mt-8 px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg shadow-md hidden transition-colors">
+        Submit Assignment
+    </button>
+</div>
+
+<script>
+let currentIndex = 0;
+const totalQuestions = {{ questions|length }};
+const answers = {};
+
+function updateProgress() {
+    const progress = ((currentIndex + 1) / totalQuestions) * 100;
+    document.getElementById('progress-bar').style.width = `${progress}%`;
+    document.getElementById('current-question').textContent = currentIndex + 1;
+}
+
+function loadQuestion(index) {
+    const url = "{% url 'get-assignment-question' assignment.id 0 %}".replace("0", index);
+    document.getElementById("question-container").setAttribute("hx-get", url);
+    htmx.process(document.getElementById("question-container"));
+}
+
+document.addEventListener("htmx:afterSwap", function () {
+    // Update navigation buttons
+    document.getElementById("prev-btn").disabled = currentIndex === 0;
+    document.getElementById("next-btn").disabled = currentIndex === totalQuestions - 1;
+    document.getElementById("next-btn").classList.toggle('hidden', currentIndex === totalQuestions - 1);
+    
+    // Show/hide submit button
+    document.getElementById("submit-btn").classList.toggle('hidden', currentIndex !== totalQuestions - 1);
+    
+    updateProgress();
+    
+    // Restore selected answer if it exists
+    const qid = document.getElementById("question-id")?.value;
+    if (qid && answers[qid]) {
+        const input = document.querySelector(`input[name="answer"][value="${answers[qid]}"]`);
+        if (input) input.checked = true;
+    }
+});
+
+document.getElementById("prev-btn").addEventListener("click", () => {
+    saveCurrentAnswer();
+    if (currentIndex > 0) {
+        currentIndex--;
+        loadQuestion(currentIndex);
+    }
+});
+
+document.getElementById("next-btn").addEventListener("click", () => {
+    saveCurrentAnswer();
+    if (currentIndex < totalQuestions - 1) {
+        currentIndex++;
+        loadQuestion(currentIndex);
+    }
+});
+
+document.getElementById("submit-btn").addEventListener("click", () => {
+    saveCurrentAnswer();
+    
+    // Show loading state
+    const btn = document.getElementById("submit-btn");
+    btn.disabled = true;
+    btn.innerHTML = `
+        <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        Submitting...
+    `;
+
+    fetch("{% url 'save-assignment-answer' %}", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": "{{ csrf_token }}"
+        },
+        body: JSON.stringify({ answers })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.message) {
+            window.location.href = "{% url 'assignment-result' assignment.id %}";
+        } else {
+            alert(data.error || "Something went wrong");
+            btn.disabled = false;
+            btn.textContent = "Submit Assignment";
+        }
+    })
+    .catch(() => {
+        alert("Network error occurred");
+        btn.disabled = false;
+        btn.textContent = "Submit Assignment";
+    });
+});
+
+function saveCurrentAnswer() {
+    const qid = document.getElementById("question-id")?.value;
+    if (!qid) return;
+    
+    const selected = document.querySelector('input[name="answer"]:checked');
+    if (selected) {
+        answers[qid] = selected.value;
+    }
+}
+</script>
+<br>
+<br>
+<br>
+<br>
+
+{% endblock %}

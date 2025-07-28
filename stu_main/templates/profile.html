@@ -1,0 +1,267 @@
+{% extends "base.html" %}
+
+{% block content %}
+<br>
+<br>
+
+<div class="max-w-4xl mx-auto mt-8 p-6 bg-white dark:bg-gray-800 shadow-lg rounded-lg transition-colors duration-200">
+    <!-- Header with Logout -->
+    <div class="flex justify-between items-start mb-6">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-800 dark:text-white">Student Profile</h1>
+            <p class="text-gray-600 dark:text-gray-400">View and manage your academic profile</p>
+        </div>
+        <a href="{% url 'user_logout' %}" 
+           class="flex items-center text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 transition-colors"
+           title="Logout">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+            </svg>
+            Logout
+        </a>
+    </div>
+
+    <!-- Profile Card -->
+    <div class="grid md:grid-cols-3 gap-8">
+        <!-- Profile Info -->
+        <div class="md:col-span-2 bg-gray-50 dark:bg-gray-700 p-6 rounded-lg shadow-inner transition-colors duration-200">
+            <div class="flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-6">
+                
+                {% if student.photo %}
+                <img src="{{ student.photo.url }}" alt="Profile Picture" class="w-32 h-32 rounded-full border-4 border-blue-200 dark:border-blue-600 object-cover shadow-md">
+                {% else %}
+                <div class="w-32 h-32 rounded-full border-4 border-gray-300 dark:border-gray-600 bg-gray-100 flex items-center justify-center text-gray-500 shadow-md">
+                    No Image
+                </div>
+                {% endif %}
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-800 dark:text-white">{{ request.user.get_full_name|default:request.user.username }}</h2>
+                    <div class="flex flex-wrap gap-4 mt-2">
+                        <span class="bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-3 py-1 rounded-full text-sm font-medium transition-colors duration-200">
+                            Class: {{ student.student_class.name }}
+                        </span>
+                        <span class="bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 px-3 py-1 rounded-full text-sm font-medium transition-colors duration-200">
+                            Rank: {{ rank }}
+                        </span>
+                    </div>
+                    
+                    <!-- Payment Status Badge -->
+                    <div class="mt-4">
+                        {% if payments and payments.0.status == "paid" %}
+                            <span class="bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 px-3 py-1 rounded-full text-sm font-medium">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                                </svg>
+                                Fees Paid
+                            </span>
+                        {% elif student.fee_status == 'partial' %}
+                            <span class="bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200 px-3 py-1 rounded-full text-sm font-medium">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM7 9a1 1 0 000 2h6a1 1 0 100-2H7z" clip-rule="evenodd" />
+                                </svg>
+                                Partial Payment (₦{{ student.paid_amount }} of ₦{{ student.total_fees }})
+                            </span>
+                        {% else %}
+                            <span class="bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200 px-3 py-1 rounded-full text-sm font-medium">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                                </svg>
+                                Fees Pending (₦{{ student.total_fees }} due)
+                            </span>
+                        {% endif %}
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="space-y-4">
+            <a href="{% url 'student_dashboard' %}" 
+               class="block w-full bg-blue-100 dark:bg-blue-900 hover:bg-blue-200 dark:hover:bg-blue-800 text-blue-800 dark:text-blue-200 font-medium py-3 px-4 rounded-lg transition-colors flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
+                </svg>
+                Back to Dashboard
+            </a>
+            
+            <!-- Pay School Fees Button -->
+            <button onclick="showPaymentModal()"
+               class="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-3 px-4 rounded-lg transition-colors flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z" />
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z" clip-rule="evenodd" />
+                </svg>
+                Pay School Fees
+            </button>
+        </div>
+    </div>
+
+    <!-- Guardian Information -->
+    <div class="mt-8 bg-blue-50 dark:bg-blue-900 p-6 rounded-lg shadow-inner border border-blue-100 dark:border-blue-800 transition-colors duration-200">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="text-xl font-semibold text-blue-800 dark:text-blue-200 flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                </svg>
+                Guardian Information
+            </h3>
+            <span class="text-sm text-blue-600 dark:text-blue-300">Emergency Contact</span>
+        </div>
+        
+        {% if guardian %}
+        <div class="grid md:grid-cols-2 gap-4">
+            <div class="bg-white dark:bg-gray-700 p-4 rounded-lg shadow-sm transition-colors duration-200">
+                <p class="text-gray-500 dark:text-gray-400 text-sm">Full Name</p>
+                <p class="font-medium dark:text-white">{{ guardian.name }}</p>
+            </div>
+            <div class="bg-white dark:bg-gray-700 p-4 rounded-lg shadow-sm transition-colors duration-200">
+                <p class="text-gray-500 dark:text-gray-400 text-sm">Phone Number</p>
+                <p class="font-medium dark:text-white">{{ guardian.phone_number }}</p>
+            </div>
+            <div class="bg-white dark:bg-gray-700 p-4 rounded-lg shadow-sm transition-colors duration-200">
+                <p class="text-gray-500 dark:text-gray-400 text-sm">Email Address</p>
+                <p class="font-medium dark:text-white">{{ guardian.email }}</p>
+            </div>
+            <div class="bg-white dark:bg-gray-700 p-4 rounded-lg shadow-sm transition-colors duration-200">
+                <p class="text-gray-500 dark:text-gray-400 text-sm">Relationship</p>
+                <p class="font-medium dark:text-white">{{ guardian.get_relationship_display }}</p>
+            </div>
+        </div>
+        {% else %}
+        <div class="text-center py-6">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
+            </svg>
+            <p class="mt-2 text-gray-500 dark:text-gray-400">No guardian details available</p>
+            <button class="mt-3 text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium transition-colors duration-200">
+                Add Guardian Information
+            </button>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Payment Modal -->
+<div id="payment-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden z-50 p-4">
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full max-h-screen overflow-y-auto">
+        <div class="p-6">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-medium text-gray-900 dark:text-white">Pay School Fees</h3>
+                <button onclick="hidePaymentModal()" class="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300">
+                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <!-- for test use dont use in production-->
+            <form method="post" action="{% url 'pay_school_fees' student.id %}" class="space-y-4">
+                {% csrf_token %}
+                <input type="hidden" name="student_id" value="{{ student.id }}">
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Amount (₦)</label>
+                    <input type="number" name="amount" value="20000" readonly
+                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Payment Method</label>
+                    <select name="payment_method" required
+                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
+                        <option value="">Select payment method</option>
+                        <option value="card">Credit/Debit Card</option>
+                        <option value="transfer">Bank Transfer</option>
+                        <option value="ussd">USSD</option>
+                        <option value="wallet">Mobile Wallet</option>
+                    </select>
+                </div>
+                
+                <!-- Card payment fields (shown when card is selected) -->
+                <div id="card-fields" class="hidden space-y-4 border-t pt-4 mt-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Card Number</label>
+                        <input type="text" name="card_number" placeholder="1234 5678 9012 3456"
+                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Expiry Date</label>
+                            <input type="text" name="expiry_date" placeholder="MM/YY"
+                                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">CVV</label>
+                            <input type="text" name="cvv" placeholder="123"
+                                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Bank transfer fields (shown when transfer is selected) -->
+                <div id="transfer-fields" class="hidden space-y-4 border-t pt-4 mt-4">
+                    <div>
+                        <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">Please transfer to:</p>
+                        <div class="bg-gray-100 dark:bg-gray-700 p-3 rounded-lg">
+                            <p class="text-sm font-medium">Bank: Zenith Bank</p>
+                            <p class="text-sm font-medium">Account Number: 1012345678</p>
+                            <p class="text-sm font-medium">Account Name: {{ request.user.school }}</p>
+                            <p class="text-sm mt-2">Use your student ID as reference</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex justify-end space-x-3 pt-4">
+                    <button type="button" onclick="hidePaymentModal()"
+                        class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors">
+                        Cancel
+                    </button>
+                    <button type="submit"
+                        class="px-4 py-2 bg-green-600 hover:bg-green-700 rounded-lg text-sm font-medium text-white transition-colors flex items-center">
+                        <svg class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        Make Payment
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Show/hide payment modal
+    function showPaymentModal() {
+        document.getElementById('payment-modal').classList.remove('hidden');
+    }
+    
+    function hidePaymentModal() {
+        document.getElementById('payment-modal').classList.add('hidden');
+    }
+    
+    // Show/hide payment method specific fields
+    document.querySelector('select[name="payment_method"]').addEventListener('change', function() {
+        // Hide all fields first
+        document.getElementById('card-fields').classList.add('hidden');
+        document.getElementById('transfer-fields').classList.add('hidden');
+        
+        // Show relevant fields
+        if (this.value === 'card') {
+            document.getElementById('card-fields').classList.remove('hidden');
+        } else if (this.value === 'transfer') {
+            document.getElementById('transfer-fields').classList.remove('hidden');
+        }
+    });
+</script>
+
+<!-- Payment History Section -->
+
+
+<br>
+<br>
+<br>
+<br>
+<br>
+
+{% endblock %}

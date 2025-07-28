@@ -1,0 +1,110 @@
+{% extends "principal/base.html" %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
+    <!-- Success Header -->
+    <div class="bg-green-600 dark:bg-green-800 px-6 py-5 text-center">
+        <div class="flex justify-center mb-3">
+            <svg class="h-12 w-12 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+        </div>
+        <h1 class="text-2xl font-bold text-white">Teacher Account Created!</h1>
+        <p class="text-green-100 dark:text-green-200 mt-1">New teacher account has been successfully registered</p>
+    </div>
+
+    <!-- Teacher Credentials -->
+    <div class="p-6 space-y-6">
+        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+            <h2 class="text-lg font-semibold text-gray-800 dark:text-white mb-3">Login Credentials</h2>
+            
+            <div class="space-y-3">
+                <div class="flex justify-between items-center p-3 bg-white dark:bg-gray-600 rounded border border-gray-200 dark:border-gray-500">
+                    <div>
+                        <div class="text-sm text-gray-500 dark:text-gray-300">Username</div>
+                        <div class="font-medium text-gray-800 dark:text-white">{{ username }}</div>
+                    </div>
+                    <button onclick="copyToClipboard('{{ username }}')" 
+                            class="text-sm bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-200 px-3 py-1 rounded-lg hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors flex items-center">
+                        <svg class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+                        </svg>
+                        Copy
+                    </button>
+                </div>
+
+                <div class="flex justify-between items-center p-3 bg-white dark:bg-gray-600 rounded border border-gray-200 dark:border-gray-500">
+                    <div>
+                        <div class="text-sm text-gray-500 dark:text-gray-300">Temporary Password</div>
+                        <div class="font-medium text-gray-800 dark:text-white">{{ password }}</div>
+                    </div>
+                    <button onclick="copyToClipboard('{{ password }}')" 
+                            class="text-sm bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-200 px-3 py-1 rounded-lg hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors flex items-center">
+                        <svg class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+                        </svg>
+                        Copy
+                    </button>
+                </div>
+            </div>
+
+            <div class="mt-4 p-3 bg-yellow-50 dark:bg-yellow-900/20 rounded border border-yellow-200 dark:border-yellow-800">
+                <div class="flex items-start">
+                    <svg class="h-5 w-5 text-yellow-500 dark:text-yellow-400 mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                    <div class="text-sm text-yellow-700 dark:text-yellow-300">
+                        <strong>Important:</strong> Instruct the teacher to change their password immediately after first login.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex flex-col sm:flex-row gap-3 pt-4">
+            <form method="post" action="#" class="w-full sm:w-auto">
+                {% csrf_token %}
+                <button type="submit" 
+                        class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2">
+                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                    Email Credentials
+                </button>
+            </form>
+            
+            <a href="{% url 'principal:create_teacher' %}" 
+               class="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2">
+                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+                Add Another Teacher
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+    function copyToClipboard(text) {
+        navigator.clipboard.writeText(text).then(function() {
+            // Create and show a toast notification
+            const toast = document.createElement('div');
+            toast.className = 'fixed bottom-4 right-4 bg-gray-800 text-white px-4 py-2 rounded-lg shadow-lg flex items-center';
+            toast.innerHTML = `
+                <svg class="h-5 w-5 mr-2 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Copied to clipboard!
+            `;
+            document.body.appendChild(toast);
+            
+            // Remove toast after 3 seconds
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }, function(err) {
+            alert("Failed to copy text: " + err);
+        });
+    }
+</script>
+{% endblock content %}

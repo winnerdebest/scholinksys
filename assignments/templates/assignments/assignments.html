@@ -1,0 +1,164 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<br>
+<br>
+<br>
+<br>
+
+<div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-8">
+    <!-- Dashboard Cards - Stacked on mobile, side by side on larger screens -->
+    <div class="grid gap-5 md:gap-8 grid-cols-1 md:grid-cols-2">
+        <!-- Active Assignments Card -->
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden border border-gray-200 dark:border-gray-700 transition-colors duration-300">
+            <div class="bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/30 dark:to-blue-800/30 px-4 sm:px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                <div class="flex items-center justify-between">
+                    <h2 class="text-base sm:text-lg font-semibold text-gray-800 dark:text-gray-200">
+                        <svg class="h-5 w-5 inline mr-2 text-blue-600 dark:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        Active Assignments
+                    </h2>
+                    <span class="inline-flex items-center px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-xs sm:text-sm font-medium bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200">
+                        {{ assignments|length }} pending
+                    </span>
+                </div>
+            </div>
+
+            <div class="divide-y divide-gray-100 dark:divide-gray-700">
+                {% if assignments %}
+                    {% for assignment in assignments %}
+                    <div class="p-3 sm:p-5 hover:bg-blue-50 dark:hover:bg-gray-700/50 transition-colors duration-150">
+                        <div class="flex items-start space-x-3 sm:space-x-4">
+                            <div class="flex-shrink-0 pt-0.5 sm:pt-1">
+                                <div class="h-8 w-8 sm:h-10 sm:w-10 rounded-full bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center text-blue-600 dark:text-blue-400">
+                                    <svg class="h-4 w-4 sm:h-5 sm:w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <div class="flex flex-col sm:flex-row sm:items-baseline">
+                                    <h3 class="text-sm sm:text-base font-medium text-gray-900 dark:text-gray-100 truncate">
+                                        {{ assignment.class_subject.subject.name }}
+                                    </h3>
+                                    <span class="mt-1 sm:mt-0 sm:ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-indigo-100 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-200">
+                                        {{ assignment.class_subject.school_class.name }}
+                                    </span>
+                                </div>
+                                <p class="mt-1 text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+                                    <svg class="h-3 w-3 sm:h-4 sm:w-4 inline mr-1 -mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                    </svg>
+                                    Due {{ assignment.due_date|date:"M j, Y" }}
+                                </p>
+                                {% if assignment.description %}
+                                <p class="mt-2 text-xs sm:text-sm text-gray-600 dark:text-gray-300 line-clamp-2">
+                                    {{ assignment.description }}
+                                </p>
+                                {% endif %}
+                            </div>
+                            <div class="flex flex-col items-end space-y-1 sm:space-y-2">
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium 
+                                    {% if assignment.is_active %}bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200{% else %}bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200{% endif %}">
+                                    {% if assignment.is_active %}Active{% else %}Inactive{% endif %}
+                                </span>
+                                <a href="{% url 'take-assignment' assignment.id %}" class="inline-flex items-center px-2 py-1 sm:px-3 sm:py-1.5 border border-transparent text-xs sm:text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200">
+                                    Start
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="p-6 sm:p-8 text-center">
+                        <svg class="mx-auto h-10 w-10 sm:h-12 sm:w-12 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <h3 class="mt-2 text-sm sm:text-base font-medium text-gray-900 dark:text-gray-100">No active assignments</h3>
+                        <p class="mt-1 text-xs sm:text-sm text-gray-500 dark:text-gray-400">All caught up! Check back later for new assignments.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Submitted Assignments Card -->
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden border border-gray-200 dark:border-gray-700 transition-colors duration-300">
+            <div class="bg-gradient-to-r from-green-50 to-green-100 dark:from-green-900/30 dark:to-green-800/30 px-4 sm:px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                <div class="flex items-center justify-between">
+                    <h2 class="text-base sm:text-lg font-semibold text-gray-800 dark:text-gray-200">
+                        <svg class="h-5 w-5 inline mr-2 text-green-600 dark:text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        Submitted Work
+                    </h2>
+                    <span class="inline-flex items-center px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-xs sm:text-sm font-medium bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200">
+                        {{ submitted_records|length }} completed
+                    </span>
+                </div>
+            </div>
+
+            <div class="divide-y divide-gray-100 dark:divide-gray-700">
+                {% if submitted_records %}
+                    {% for submission in submitted_records %}
+                    <div class="p-3 sm:p-5 hover:bg-green-50 dark:hover:bg-gray-700/50 transition-colors duration-150">
+                        <div class="flex items-start space-x-3 sm:space-x-4">
+                            <div class="flex-shrink-0 pt-0.5 sm:pt-1">
+                                <div class="h-8 w-8 sm:h-10 sm:w-10 rounded-full bg-green-100 dark:bg-green-900/50 flex items-center justify-center text-green-600 dark:text-green-400">
+                                    <svg class="h-4 w-4 sm:h-5 sm:w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <div class="flex flex-col sm:flex-row sm:items-baseline">
+                                    <h3 class="text-sm sm:text-base font-medium text-gray-900 dark:text-gray-100 truncate">
+                                        {{ submission.assignment.class_subject.subject.name }}
+                                    </h3>
+                                    <span class="mt-1 sm:mt-0 sm:ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-indigo-100 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-200">
+                                        {{ submission.assignment.class_subject.school_class.name }}
+                                    </span>
+                                </div>
+                                <p class="mt-1 text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+                                    <svg class="h-3 w-3 sm:h-4 sm:w-4 inline mr-1 -mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                    </svg>
+                                    Submitted {{ submission.submitted_at|date:"M j, Y" }}
+                                </p>
+                                {% if submission.score %}
+                                <div class="mt-2 flex items-center">
+                                    <span class="text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400">Score:</span>
+                                    <span class="ml-2 px-2 py-0.5 rounded text-xs font-semibold bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200">
+                                        {{ submission.score|floatformat:1 }}%
+                                    </span>
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div class="flex flex-col items-end space-y-1 sm:space-y-2">
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200">
+                                    Graded
+                                </span>
+                                {% if submission.feedback %}
+                                <button class="text-xs text-blue-600 dark:text-blue-400 hover:underline" onclick="alert('Feedback: {{ submission.feedback|escapejs }}')">
+                                    View Feedback
+                                </button>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="p-6 sm:p-8 text-center">
+                        <svg class="mx-auto h-10 w-10 sm:h-12 sm:w-12 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <h3 class="mt-2 text-sm sm:text-base font-medium text-gray-900 dark:text-gray-100">No submissions yet</h3>
+                        <p class="mt-1 text-xs sm:text-sm text-gray-500 dark:text-gray-400">Complete an assignment to see your results here.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

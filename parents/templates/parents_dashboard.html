@@ -1,0 +1,67 @@
+{% extends "parent_base.html" %}
+
+{% block title %}Parent Portal - Dashboard{% endblock %}
+
+{% block content %}
+    <!-- Welcome Banner -->
+    <div class="bg-gradient-to-r from-primary to-purple-600 text-white rounded-xl p-4 mb-6 shadow">
+        <h2 class="font-bold text-lg">Welcome, John!</h2>
+        <p class="text-sm opacity-90">You have 2 children enrolled</p>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="grid grid-cols-2 gap-4 mb-6">
+        <a href="{% url 'parents:children_page' %}" class="bg-white dark:bg-gray-700 p-4 rounded-xl shadow-sm flex flex-col items-center">
+            <div class="w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center text-blue-500 dark:text-blue-300 mb-2">
+                <i class="fas fa-child text-xl"></i>
+            </div>
+            <span class="text-sm font-medium">My Kids</span>
+        </a>
+        <a href="{% url 'parents:payments_page' %}" class="bg-white dark:bg-gray-700 p-4 rounded-xl shadow-sm flex flex-col items-center">
+            <div class="w-12 h-12 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center text-green-500 dark:text-green-300 mb-2">
+                <i class="fas fa-money-bill-wave text-xl"></i>
+            </div>
+            <span class="text-sm font-medium">Payments</span>
+        </a>
+        <a href="#" class="bg-white dark:bg-gray-700 p-4 rounded-xl shadow-sm flex flex-col items-center">
+            <div class="w-12 h-12 bg-yellow-100 dark:bg-yellow-900 rounded-full flex items-center justify-center text-yellow-500 dark:text-yellow-300 mb-2">
+                <i class="fas fa-bullhorn text-xl"></i>
+            </div>
+            <span class="text-sm font-medium">Announcements</span>
+        </a>
+        <a href="{% url 'parents:messages' %}" class="bg-white dark:bg-gray-700 p-4 rounded-xl shadow-sm flex flex-col items-center">
+            <div class="w-12 h-12 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center text-purple-500 dark:text-purple-300 mb-2">
+                <i class="fas fa-envelope text-xl"></i>
+            </div>
+            <span class="text-sm font-medium">Messages</span>
+        </a>
+    </div>
+
+    <!-- Recent Activity -->
+    <div class="mb-6">
+        <h3 class="font-bold mb-3 flex justify-between items-center">
+            <span>Recent Activity</span>
+            <a href="#" class="text-sm text-primary">See All</a>
+        </h3>
+        <div class="space-y-3">
+            <div class="bg-white dark:bg-gray-700 p-3 rounded-lg shadow-sm flex items-start">
+                <div class="w-10 h-10 rounded-full bg-red-100 dark:bg-red-900 flex items-center justify-center text-red-500 dark:text-red-300 mr-3">
+                    <i class="fas fa-exclamation"></i>
+                </div>
+                <div>
+                    <h4 class="font-medium">School Closed Tomorrow</h4>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">Today at 2:30 PM</p>
+                </div>
+            </div>
+            <div class="bg-white dark:bg-gray-700 p-3 rounded-lg shadow-sm flex items-start">
+                <div class="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center text-blue-500 dark:text-blue-300 mr-3">
+                    <i class="fas fa-money-bill-wave"></i>
+                </div>
+                <div>
+                    <h4 class="font-medium">Payment Received</h4>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">Yesterday at 10:15 AM</p>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

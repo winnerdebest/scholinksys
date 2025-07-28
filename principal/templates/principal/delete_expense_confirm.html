@@ -1,0 +1,50 @@
+{% extends 'principal/base.html' %}
+{% load humanize %}
+{% load static %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="max-w-md mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-md">
+        <div class="p-6">
+            <h1 class="text-2xl font-bold text-gray-800 dark:text-white mb-6">Delete Expense</h1>
+            
+            <div class="bg-red-50 dark:bg-red-900 p-4 rounded-lg mb-6">
+                <p class="text-red-800 dark:text-red-200">
+                    Are you sure you want to delete this expense?
+                </p>
+            </div>
+
+            <div class="mb-6 space-y-2">
+                <p class="text-gray-600 dark:text-gray-300">
+                    <span class="font-semibold">Category:</span> 
+                    {{ expense.category.name }}
+                </p>
+                <p class="text-gray-600 dark:text-gray-300">
+                    <span class="font-semibold">Amount:</span> 
+                    ₦{{ expense.amount|intcomma }}
+                </p>
+                <p class="text-gray-600 dark:text-gray-300">
+                    <span class="font-semibold">Date:</span> 
+                    {{ expense.date }}
+                </p>
+                <p class="text-gray-600 dark:text-gray-300">
+                    <span class="font-semibold">Description:</span> 
+                    {{ expense.description }}
+                </p>
+            </div>
+
+            <form method="POST" class="flex justify-end space-x-4">
+                {% csrf_token %}
+                <a href="{% url 'principal:expense_list' %}"
+                    class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700">
+                    Cancel
+                </a>
+                <button type="submit"
+                    class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500">
+                    Delete Expense
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock content %} 

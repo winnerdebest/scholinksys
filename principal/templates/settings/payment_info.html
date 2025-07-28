@@ -1,0 +1,203 @@
+{% extends "principal/base.html" %}
+
+{% block content %}
+
+<div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Header -->
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-900 dark:text-white flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mr-3 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
+            </svg>
+            Payment Information
+        </h1>
+        <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
+            Set up your bank account to receive payments from parents and students.
+        </p>
+    </div>
+
+    <!-- Settings Tabs -->
+    {% include "settings/components/settings_tabs.html" with active_tab="payment" %}
+
+    <!-- Payment Information Card -->
+    <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-6">
+        <div class="flex">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-500 dark:text-blue-400 mt-0.5 mr-2 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9z" clip-rule="evenodd" />
+            </svg>
+            <div>
+                <h3 class="text-sm font-medium text-blue-800 dark:text-blue-200">How your payment details are used</h3>
+                <div class="mt-1 text-sm text-blue-700 dark:text-blue-300 space-y-1">
+                    <p>• This account will automatically receive payments when parents pay for school fees, activities, or other services</p>
+                    <p>• Payments will be processed securely through our payment partners</p>
+                    <p>• You'll receive the funds immediately after payment</p>
+                    <p>• Ensure all details are accurate to avoid payment delays</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Payment Form -->
+    <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
+        <form method="post" class="space-y-6">
+            {% csrf_token %}
+            
+            <!-- Account Name -->
+            <div>
+                <label for="account_name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Account Name
+                </label>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mb-2">
+                    Must match exactly the name on your bank account
+                </p>
+                <input type="text" id="account_name" name="account_name" value="{{ payment_info.account_name|default:'' }}" 
+                       class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                       required>
+            </div>
+            
+            <!-- Account Number -->
+            <div>
+                <label for="account_number" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Account Number
+                </label>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mb-2">
+                    Your 10-digit bank account number
+                </p>
+                <input type="text" id="account_number" name="account_number" value="{{ payment_info.account_number|default:'' }}"
+                       class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                       required>
+            </div>
+            
+            <!-- Bank Selection -->
+            <div>
+                <label for="bank_code" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Bank Name
+                </label>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mb-2">
+                    Select the bank where your account is held
+                </p>
+                <select id="bank_code" name="bank_code" 
+                        class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                        required>
+                    {% for bank in banks %}
+                        <option value="{{ bank.code }}" {% if payment_info.bank_code == bank.code %}selected{% endif %}>
+                            {{ bank.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+                <input type="hidden" name="bank_name" value="" id="bank_name_input">
+            </div>
+            
+            <!-- Submit Button -->
+            <div class="pt-4">
+                <button type="submit" 
+                        class="w-full md:w-auto px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
+                        {% if payment_info %}Update{% else %}Save{% endif %} Payment Details
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Security Note -->
+    <div class="mt-6 text-center text-xs text-gray-500 dark:text-gray-400">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline-block mr-1" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
+        </svg>
+        Your payment information is encrypted and stored securely
+    </div>
+</div>
+
+<!-- Success Modal -->
+<div id="successModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-sm w-full p-6 mx-4">
+        <div class="text-center">
+            <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 dark:bg-green-900/30">
+                <svg class="h-6 w-6 text-green-600 dark:text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+            </div>
+            <h3 class="mt-3 text-lg font-medium text-gray-900 dark:text-white" id="successTitle">Success!</h3>
+            <div class="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                <p id="successMessage">Your payment details have been saved successfully.</p>
+            </div>
+            <div class="mt-4">
+                <button type="button" onclick="closeSuccessModal()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    Continue
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Error Modal -->
+<div id="errorModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-sm w-full p-6 mx-4">
+        <div class="text-center">
+            <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 dark:bg-red-900/30">
+                <svg class="h-6 w-6 text-red-600 dark:text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+            </div>
+            <h3 class="mt-3 text-lg font-medium text-gray-900 dark:text-white">Error</h3>
+            <div class="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                <p id="errorMessage">There was an error processing your payment details.</p>
+            </div>
+            <div class="mt-4">
+                <button type="button" onclick="closeErrorModal()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    Try Again
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Auto-fill bank_name from selected bank
+    document.addEventListener('DOMContentLoaded', function() {
+        const bankSelect = document.getElementById('bank_code');
+        const bankNameInput = document.getElementById('bank_name_input');
+        
+        bankSelect.addEventListener('change', function() {
+            const selected = this.options[this.selectedIndex];
+            bankNameInput.value = selected.text;
+        });
+        
+        // Trigger initially
+        bankSelect.dispatchEvent(new Event('change'));
+
+        // Check for messages from Django
+        {% if messages %}
+            {% for message in messages %}
+                {% if message.tags == 'success' %}
+                    showSuccessModal("{{ message }}");
+                {% elif message.tags == 'error' %}
+                    showErrorModal("{{ message }}");
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+    });
+
+    function showSuccessModal(message) {
+        const modal = document.getElementById('successModal');
+        const messageElement = document.getElementById('successMessage');
+        messageElement.textContent = message;
+        modal.classList.remove('hidden');
+    }
+
+    function closeSuccessModal() {
+        document.getElementById('successModal').classList.add('hidden');
+    }
+
+    function showErrorModal(message) {
+        const modal = document.getElementById('errorModal');
+        const messageElement = document.getElementById('errorMessage');
+        messageElement.textContent = message;
+        modal.classList.remove('hidden');
+    }
+
+    function closeErrorModal() {
+        document.getElementById('errorModal').classList.add('hidden');
+    }
+</script>
+
+{% endblock %}

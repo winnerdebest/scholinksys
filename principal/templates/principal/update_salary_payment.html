@@ -1,0 +1,163 @@
+{% extends 'principal/base.html' %}
+{% load humanize %}
+{% load static %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="max-w-2xl mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-md">
+        <div class="p-6">
+            <div class="mb-6">
+                <h1 class="text-2xl font-bold text-gray-800 dark:text-white">Update Salary Payment</h1>
+                <p class="text-gray-600 dark:text-gray-400 mt-2">
+                    Teacher: {{ teacher.user.get_full_name }}
+                </p>
+            </div>
+
+            <form method="POST" class="space-y-6">
+                {% csrf_token %}
+
+                <!-- Basic Salary -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Basic Salary *
+                    </label>
+                    <input type="number" name="basic_salary" step="0.01" readonly
+                        value="{{ salary_payment.basic_salary|default:teacher.salary }}"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                </div>
+
+                <!-- Allowances -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Allowances
+                    </label>
+                    <input type="number" name="allowances" step="0.01"
+                        value="{{ salary_payment.allowances|default:'0.00' }}"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                </div>
+
+                <!-- Deductions -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Deductions
+                    </label>
+                    <input type="number" name="deductions" step="0.01"
+                        value="{{ salary_payment.deductions|default:'0.00' }}"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                </div>
+
+                <!-- Month -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Month *
+                    </label>
+                    <input type="month" name="month" required
+                        value="{{ salary_payment.month|date:'Y-m' }}"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                </div>
+
+                <!-- Payment Status -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Payment Status *
+                    </label>
+                    <select name="payment_status" required
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                        {% for status, label in payment_status_choices %}
+                        <option value="{{ status }}" 
+                            {% if salary_payment.expense.payment_status == status %}selected{% endif %}>
+                            {{ label }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Payment Date -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Payment Date
+                    </label>
+                    <input type="date" name="payment_date"
+                        value="{{ salary_payment.expense.payment_date|date:'Y-m-d' }}"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                </div>
+
+                <!-- Comments -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Comments
+                    </label>
+                    <textarea name="comments" rows="3"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">{{ salary_payment.comments }}</textarea>
+                </div>
+
+                <!-- Summary -->
+                <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+                    <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-3">Payment Summary</h3>
+                    <div class="space-y-2">
+                        <div class="flex justify-between">
+                            <span class="text-gray-600 dark:text-gray-400">Basic Salary:</span>
+                            <span class="text-gray-800 dark:text-white">₦{{ salary_payment.basic_salary|default:teacher.salary|intcomma }}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600 dark:text-gray-400">Allowances:</span>
+                            <span class="text-gray-800 dark:text-white">₦{{ salary_payment.allowances|default:'0.00'|intcomma }}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600 dark:text-gray-400">Deductions:</span>
+                            <span class="text-gray-800 dark:text-white">₦{{ salary_payment.deductions|default:'0.00'|intcomma }}</span>
+                        </div>
+                        <div class="border-t border-gray-200 dark:border-gray-600 pt-2 mt-2">
+                            <div class="flex justify-between font-semibold">
+                                <span class="text-gray-800 dark:text-white">Net Salary:</span>
+                                <span class="text-gray-800 dark:text-white">₦{{ salary_payment.net_salary|default:teacher.salary|intcomma }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Submit Buttons -->
+                <div class="flex justify-end space-x-4">
+                    <a href="{% url 'principal:teacher_salaries' %}"
+                        class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700">
+                        Cancel
+                    </a>
+                    <button type="submit"
+                        class="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500">
+                        Update Payment
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('form');
+    const basicSalaryInput = form.querySelector('input[name="basic_salary"]');
+    const allowancesInput = form.querySelector('input[name="allowances"]');
+    const deductionsInput = form.querySelector('input[name="deductions"]');
+    const summaryBasic = document.querySelector('.payment-summary .basic-salary');
+    const summaryAllowances = document.querySelector('.payment-summary .allowances');
+    const summaryDeductions = document.querySelector('.payment-summary .deductions');
+    const summaryNet = document.querySelector('.payment-summary .net-salary');
+
+    function updateSummary() {
+        const basicSalary = parseFloat(basicSalaryInput.value) || 0;
+        const allowances = parseFloat(allowancesInput.value) || 0;
+        const deductions = parseFloat(deductionsInput.value) || 0;
+        const netSalary = basicSalary + allowances - deductions;
+
+        if (summaryBasic) summaryBasic.textContent = `$${basicSalary.toFixed(2)}`;
+        if (summaryAllowances) summaryAllowances.textContent = `$${allowances.toFixed(2)}`;
+        if (summaryDeductions) summaryDeductions.textContent = `$${deductions.toFixed(2)}`;
+        if (summaryNet) summaryNet.textContent = `$${netSalary.toFixed(2)}`;
+    }
+
+    [basicSalaryInput, allowancesInput, deductionsInput].forEach(input => {
+        input.addEventListener('input', updateSummary);
+    });
+});
+</script>
+{% endblock content %} 

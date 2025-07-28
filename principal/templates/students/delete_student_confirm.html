@@ -1,0 +1,113 @@
+{% extends "principal/base.html" %}
+{% load static %}
+
+{% block title %}Delete Student Confirmation{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8 max-w-6xl">
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
+        <!-- Header -->
+        <div class="bg-red-600 dark:bg-red-800 px-6 py-4">
+            <h1 class="text-2xl font-bold text-white">Delete Student</h1>
+            <p class="text-red-100 dark:text-red-200">Confirm deletion of student record</p>
+        </div>
+
+        <!-- Confirmation Content -->
+        <div class="p-6">
+            <div class="flex flex-col items-center text-center mb-6">
+                {% if student.photo %}
+                <img src="{{ student.photo.url }}" alt="Student Photo" class="w-32 h-32 rounded-full object-cover border-4 border-red-200 mb-4">
+                {% else %}
+                <div class="w-32 h-32 rounded-full bg-gray-200 dark:bg-gray-600 flex items-center justify-center mb-4">
+                    <i class="fas fa-user text-4xl text-gray-500 dark:text-gray-400"></i>
+                </div>
+                {% endif %}
+                
+                <h2 class="text-xl font-semibold text-gray-800 dark:text-white">
+                    {{ student.user.get_full_name }}
+                </h2>
+                <p class="text-gray-600 dark:text-gray-300">
+                    {{ student.student_class.name }} • {{ student.user.email }}
+                </p>
+            </div>
+
+            <div class="bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 dark:border-red-600 p-4 mb-6">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-exclamation-circle text-red-500 dark:text-red-400 mt-1"></i>
+                    </div>
+                    <div class="ml-3">
+                        <h3 class="text-sm font-medium text-red-800 dark:text-red-200">
+                            Warning: This action cannot be undone
+                        </h3>
+                        <div class="mt-2 text-sm text-red-700 dark:text-red-300">
+                            <p>
+                                Deleting this student will permanently remove:
+                            </p>
+                            <ul class="list-disc pl-5 mt-1 space-y-1">
+                                <li>Student account and profile</li>
+                                <li>All academic records</li>
+                                <li>Attendance records</li>
+                                <li>Fee payment history</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg mb-6">
+                <h3 class="text-lg font-medium text-gray-800 dark:text-white mb-3">Associated Parents/Guardians</h3>
+                {% if student.parents.all %}
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {% for parent in student.parents.all %}
+                    <div class="border border-gray-200 dark:border-gray-600 rounded-lg p-3">
+                        <div class="flex items-center space-x-3">
+                            <div class="flex-shrink-0">
+                                <div class="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-600 flex items-center justify-center">
+                                    <i class="fas fa-user text-gray-500 dark:text-gray-400"></i>
+                                </div>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm font-medium text-gray-900 dark:text-white truncate">
+                                    {{ parent.user.get_full_name }}
+                                </p>
+                                <p class="text-sm text-gray-500 dark:text-gray-400 truncate">
+                                    {{ parent.user.email }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="text-sm text-gray-500 dark:text-gray-400">No parents/guardians associated with this student</p>
+                {% endif %}
+            </div>
+
+            <!-- Form Actions -->
+            <form method="POST" action="{% url 'principal:delete_student' student.id %}">
+                {% csrf_token %}
+                <div class="flex justify-end space-x-4 pt-4 border-t border-gray-200 dark:border-gray-600">
+                    <a href="{% url 'principal:student_list' %}" class="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors duration-200">
+                        Cancel
+                    </a>
+                    <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors duration-200">
+                        <i class="fas fa-trash mr-2"></i> Confirm Delete
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    .fade-in {
+        animation: fadeIn 0.3s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+</style>
+{% endblock %}

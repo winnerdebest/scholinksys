@@ -1,0 +1,211 @@
+{% extends 'principal/base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block content %}
+<div class="container mx-auto">
+    <!-- Header Section -->
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold text-gray-800 dark:text-white">Expense Management</h1>
+        <div class="flex space-x-4">
+            <a href="{% url 'principal:teacher_salaries' %}" 
+               class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2">
+                <i class="fas fa-chalkboard-teacher"></i>
+                <span>Teacher Salaries</span>
+            </a>
+            <div class="flex space-x-2">
+                <a href="{% url 'principal:export_expenses_excel' %}{% if selected_category %}?category={{ selected_category }}{% endif %}{% if selected_month %}&month={{ selected_month }}{% endif %}"
+                   class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2">
+                    <i class="fas fa-file-excel"></i>
+                    <span>Export Excel</span>
+                </a>
+                <a href="{% url 'principal:export_expenses_pdf' %}{% if selected_category %}?category={{ selected_category }}{% endif %}{% if selected_month %}&month={{ selected_month }}{% endif %}"
+                   class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2">
+                    <i class="fas fa-file-pdf"></i>
+                    <span>Export PDF</span>
+                </a>
+            </div>
+            <a href="{% url 'principal:create_expense' %}" 
+               class="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2">
+                <i class="fas fa-plus"></i>
+                <span>Add New Expense</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+        <!-- Total Expenses Card -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">Total Expenses</p>
+                    <h3 class="text-2xl font-bold text-gray-800 dark:text-white">₦{{ total_expenses|floatformat:2|intcomma }}</h3>
+                </div>
+                <div class="p-3 bg-red-100 rounded-full">
+                    <i class="fas fa-money-bill text-red-500"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Teacher Salaries Card -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">Teacher Salaries</p>
+                    <h3 class="text-2xl font-bold text-gray-800 dark:text-white">₦{{ teacher_salaries|floatformat:2|intcomma }}</h3>
+                </div>
+                <div class="p-3 bg-blue-100 rounded-full">
+                    <i class="fas fa-chalkboard-teacher text-blue-500"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Other Expenses Card -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">Other Expenses</p>
+                    <h3 class="text-2xl font-bold text-gray-800 dark:text-white">₦{{ other_expenses|floatformat:2|intcomma }}</h3>
+                </div>
+                <div class="p-3 bg-green-100 rounded-full">
+                    <i class="fas fa-file-invoice-dollar text-green-500"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pending Salaries Card -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">Pending Salaries</p>
+                    <h3 class="text-2xl font-bold text-gray-800 dark:text-white">₦{{ pending_salaries|floatformat:2|intcomma }}</h3>
+                </div>
+                <div class="p-3 bg-yellow-100 rounded-full">
+                    <i class="fas fa-clock text-yellow-500"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Expenses Table -->
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow">
+        <div class="p-6">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-semibold text-gray-800 dark:text-white">Recent Expenses</h2>
+                <form method="get" class="flex space-x-2">
+                    <select name="category" class="border rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                        <option value="all">All Categories</option>
+                        {% for category in categories %}
+                        <option value="{{ category.id }}" {% if selected_category == category.id|stringformat:"s" %}selected{% endif %}>
+                            {{ category.name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                    <input type="month" name="month" value="{{ selected_month }}" 
+                           class="border rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                    <button type="submit" 
+                            class="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg">
+                        Filter
+                    </button>
+                </form>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="min-w-full">
+                    <thead class="bg-gray-50 dark:bg-gray-700">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Date</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Category</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Description</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Amount</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Status</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                        {% for expense in expenses %}
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
+                                {{ expense.date|date:"Y-m-d" }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="px-2 py-1 text-xs font-semibold rounded-full 
+                                    {% if expense.category.name == 'Teacher Salary' %}
+                                        bg-blue-100 text-blue-800
+                                    {% else %}
+                                        bg-yellow-100 text-yellow-800
+                                    {% endif %}">
+                                    {{ expense.category.name }}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
+                                {{ expense.description }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
+                                ₦{{ expense.amount|floatformat:2|intcomma }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="px-2 py-1 text-xs font-semibold rounded-full 
+                                    {% if expense.payment_status == 'paid' %}
+                                        bg-green-100 text-green-800
+                                    {% elif expense.payment_status == 'pending' %}
+                                        bg-yellow-100 text-yellow-800
+                                    {% else %}
+                                        bg-red-100 text-red-800
+                                    {% endif %}">
+                                    {{ expense.get_payment_status_display }}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                <a href="{% url 'principal:edit_expense' expense.id %}" 
+                                   class="text-primary-600 hover:text-primary-900 mr-3">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="{% url 'principal:delete_expense' expense.id %}" 
+                                   class="text-red-600 hover:text-red-900">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
+                                No expenses found
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <!-- Pagination -->
+            {% if is_paginated %}
+            <div class="flex items-center justify-between mt-4">
+                <div class="text-sm text-gray-500 dark:text-gray-400">
+                    Showing {{ page_obj.start_index }} to {{ page_obj.end_index }} of {{ paginator.count }} entries
+                </div>
+                <div class="flex space-x-2">
+                    {% if page_obj.has_previous %}
+                    <a href="?page={{ page_obj.previous_page_number }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_month %}&month={{ selected_month }}{% endif %}"
+                       class="px-3 py-1 border rounded-lg dark:border-gray-600 dark:text-gray-300">Previous</a>
+                    {% endif %}
+
+                    {% for num in page_obj.paginator.page_range %}
+                    {% if page_obj.number == num %}
+                    <span class="px-3 py-1 border rounded-lg bg-primary-600 text-white">{{ num }}</span>
+                    {% else %}
+                    <a href="?page={{ num }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_month %}&month={{ selected_month }}{% endif %}"
+                       class="px-3 py-1 border rounded-lg dark:border-gray-600 dark:text-gray-300">{{ num }}</a>
+                    {% endif %}
+                    {% endfor %}
+
+                    {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_month %}&month={{ selected_month }}{% endif %}"
+                       class="px-3 py-1 border rounded-lg dark:border-gray-600 dark:text-gray-300">Next</a>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock content %}

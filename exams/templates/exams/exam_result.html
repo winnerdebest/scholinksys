@@ -1,0 +1,134 @@
+{% extends "exams/base.html" %}
+{% load exam_filters %}
+{% load static %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto bg-white p-8 rounded-xl shadow-md">
+    <!-- Result Header -->
+    <div class="text-center mb-8">
+        <h1 class="text-3xl font-bold text-gray-800">{{ exam.class_subject }} - Results</h1>
+        <p class="text-gray-600 mt-1">Completed on {{ exam_record.updated_at|date:"F d, Y" }}</p>
+    </div>
+
+    <!-- Score Summary -->
+    <div class="bg-gray-50 p-6 rounded-lg border border-gray-200 mb-8">
+        <div class="flex flex-col md:flex-row items-center justify-center md:justify-between">
+            <div class="text-center md:text-left mb-4 md:mb-0">
+                <h2 class="text-xl font-semibold text-gray-700">Your Score</h2>
+                <p class="text-gray-600">{{ correct_count }} out of {{ total_questions }} questions answered correctly</p>
+            </div>
+            
+            <div class="relative h-32 w-32">
+                <!-- Score Circle -->
+                <svg class="w-full h-full" viewBox="0 0 36 36">
+                    <!-- Background Circle -->
+                    <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                          fill="none" stroke="#e5e7eb" stroke-width="3" />
+                    
+                    <!-- Score Circle (using stroke-dasharray to show percentage) -->
+                    <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                          fill="none" stroke="#3b82f6" stroke-width="3" 
+                          stroke-dasharray="{{ score_percent }}, 100" />
+                </svg>
+                
+                <!-- Percentage Text -->
+                <div class="absolute top-0 left-0 w-full h-full flex items-center justify-center">
+                    <span class="text-3xl font-bold text-gray-800">{{ score_percent|floatformat:0 }}%</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Status Bar -->
+    <div class="mb-8">
+        {% if score_percent >= 70 %}
+            <div class="bg-green-100 border-l-4 border-green-500 p-4 rounded-md">
+                <div class="flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-500 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <p class="font-medium text-green-700">Congratulations! You've passed this exam.</p>
+                </div>
+            </div>
+        {% else %}
+            <div class="bg-orange-100 border-l-4 border-orange-500 p-4 rounded-md">
+                <div class="flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-orange-500 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                    <p class="font-medium text-orange-700">You didn't meet the passing score of 70%. Consider reviewing the material and trying again.</p>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Answer Review -->
+    <div>
+        <h2 class="text-xl font-semibold text-gray-800 mb-4">Question Review</h2>
+        
+        {% for detail in result_details %}
+        <div class="bg-white border border-gray-200 rounded-lg p-4 mb-4 shadow-sm">
+            <!-- Question -->
+            <div class="mb-3">
+                <p class="font-medium">Question {{ forloop.counter }}: {{ detail.question.text }}</p>
+                
+                {% if detail.question.image %}
+                <img src="{{ detail.question.image.url }}" class="mt-2 max-h-60 rounded-lg">
+                {% endif %}
+            </div>
+            
+            <!-- Your Answer -->
+            <div class="mb-3">
+                <p class="text-sm text-gray-600">Your answer:</p>
+                <div class="mt-1 {% if detail.is_correct %}text-green-700{% else %}text-red-700{% endif %}">
+                    {% if detail.student_answer %}
+                        <div class="flex items-center">
+                            {% if detail.is_correct %}
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            {% else %}
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            {% endif %}
+                            <span>{{ detail.student_answer }}. {{ detail.question|get_option_text:detail.student_answer }}</span>
+                        </div>
+                    {% else %}
+                        <span class="text-orange-500">No answer provided</span>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Correct Answer if Wrong -->
+            {% if not detail.is_correct %}
+            <div class="pt-2 border-t border-gray-200">
+                <p class="text-sm text-gray-600">Correct answer:</p>
+                <div class="mt-1 text-green-700">
+                    <div class="flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <span>{{ detail.correct_answer }}. {{ detail.question|get_option_text:detail.correct_answer }}</span>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+    
+    <!-- Action Buttons -->
+    <div class="mt-8 flex justify-between">
+        <a href="{% url "exam_login" %}" class="bg-gray-200 hover:bg-gray-300 px-5 py-2.5 text-gray-700 rounded-lg transition">
+            Back to Exam List
+        </a>
+        
+        {% if score_percent < 70 %}
+        <a href="#" class="bg-blue-600 hover:bg-blue-700 px-5 py-2.5 text-white rounded-lg transition">
+            Retry Exam
+        </a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

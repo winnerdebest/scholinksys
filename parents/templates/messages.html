@@ -1,0 +1,166 @@
+{% extends "parent_base.html" %}
+
+{% block title %}Parent Portal - Messages{% endblock %}
+
+{% block content %}
+<!-- Search Bar -->
+ <br>
+<div class="p-4 border-b border-gray-200 dark:border-gray-700 sticky top-16 z-10 bg-white dark:bg-gray-800">
+    <div class="relative">
+        <input type="text" placeholder="Search messages..." 
+               class="w-full pl-10 pr-4 py-2 bg-gray-100 dark:bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+        <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+    </div>
+</div>
+
+
+<!-- Message Categories -->
+<div class="flex overflow-x-auto px-4 py-2 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 sticky top-28 z-10 no-scrollbar">
+    <button class="px-4 py-1 mr-2 bg-primary text-white rounded-full text-sm whitespace-nowrap">
+        All Messages
+    </button>
+    <button class="px-4 py-1 mr-2 bg-gray-100 dark:bg-gray-700 rounded-full text-sm whitespace-nowrap">
+        Unread (2)
+    </button>
+    <button class="px-4 py-1 mr-2 bg-gray-100 dark:bg-gray-700 rounded-full text-sm whitespace-nowrap">
+        Teachers
+    </button>
+    <button class="px-4 py-1 bg-gray-100 dark:bg-gray-700 rounded-full text-sm whitespace-nowrap">
+        School
+    </button>
+</div>
+
+<!-- Message List -->
+<div class="divide-y divide-gray-200 dark:divide-gray-700 pb-16"> <!-- Added pb-16 for floating button space -->
+    <!-- Unread Message -->
+     <br/>
+     <br/>
+    <a href="#" class="block p-4 hover:bg-gray-50 dark:hover:bg-gray-700 bg-blue-50/50 dark:bg-blue-900/20">
+        <div class="flex items-start">
+            <div class="relative">
+                <div class="w-12 h-12 rounded-full bg-indigo-100 dark:bg-indigo-900 flex items-center justify-center text-indigo-500 dark:text-indigo-300 mr-3">
+                    <i class="fas fa-user-tie"></i>
+                </div>
+                <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full border-2 border-white dark:border-gray-800"></span>
+            </div>
+            <div class="flex-1 min-w-0">
+                <div class="flex justify-between items-center mb-1">
+                    <h2 class="font-bold truncate">Ms. Thompson (Grade 5)</h2>
+                    <span class="text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap ml-2">2h ago</span>
+                </div>
+                <p class="text-sm font-medium text-gray-600 dark:text-gray-300 truncate">
+                    Regarding Sarah's science project, we need to discuss the materials...
+                </p>
+            </div>
+        </div>
+    </a>
+
+    <!-- School Announcement -->
+    <a href="#" class="block p-4 hover:bg-gray-50 dark:hover:bg-gray-700">
+        <div class="flex items-start">
+            <div class="w-12 h-12 rounded-full bg-teal-100 dark:bg-teal-900 flex items-center justify-center text-teal-500 dark:text-teal-300 mr-3">
+                <i class="fas fa-school"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+                <div class="flex justify-between items-center mb-1">
+                    <h2 class="font-bold truncate">School Office</h2>
+                    <span class="text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap ml-2">1d ago</span>
+                </div>
+                <p class="text-sm text-gray-600 dark:text-gray-300 truncate">
+                    Reminder: School photos tomorrow. Please ensure your child wears...
+                </p>
+                <div class="flex mt-1">
+                    <span class="text-xs px-2 py-0.5 bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200 rounded-full">Important</span>
+                </div>
+            </div>
+        </div>
+    </a>
+
+    <!-- Transport Update -->
+    <a href="#" class="block p-4 hover:bg-gray-50 dark:hover:bg-gray-700">
+        <div class="flex items-start">
+            <div class="w-12 h-12 rounded-full bg-amber-100 dark:bg-amber-900 flex items-center justify-center text-amber-500 dark:text-amber-300 mr-3">
+                <i class="fas fa-bus"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+                <div class="flex justify-between items-center mb-1">
+                    <h2 class="font-bold truncate">Transport Department</h2>
+                    <span class="text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap ml-2">3d ago</span>
+                </div>
+                <p class="text-sm text-gray-600 dark:text-gray-300 truncate">
+                    Bus route 12 will have a temporary change next week due to road...
+                </p>
+            </div>
+        </div>
+    </a>
+
+    <!-- Teacher Message -->
+    <a href="#" class="block p-4 hover:bg-gray-50 dark:hover:bg-gray-700">
+        <div class="flex items-start">
+            <div class="relative">
+                <div class="w-12 h-12 rounded-full bg-purple-100 dark:bg-purple-900 flex items-center justify-center text-purple-500 dark:text-purple-300 mr-3">
+                    <i class="fas fa-chalkboard-teacher"></i>
+                </div>
+                <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full border-2 border-white dark:border-gray-800"></span>
+            </div>
+            <div class="flex-1 min-w-0">
+                <div class="flex justify-between items-center mb-1">
+                    <h2 class="font-bold truncate">Mr. Johnson (Math)</h2>
+                    <span class="text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap ml-2">5d ago</span>
+                </div>
+                <p class="text-sm text-gray-600 dark:text-gray-300 truncate">
+                    Michael did excellent work on his math test this week. Let's discuss...
+                </p>
+            </div>
+        </div>
+    </a>
+</div>
+
+<!-- New Message Floating Button - Fixed above bottom navigation -->
+<div class="fixed bottom-16 right-4 z-20"> <!-- Changed from bottom-20 to bottom-16 and added z-20 -->
+    <a href="#" class="w-14 h-14 bg-primary rounded-full shadow-lg flex items-center justify-center text-white hover:bg-primary-hover transition-colors">
+        <i class="fas fa-edit text-xl"></i>
+    </a>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Message search functionality
+    const searchInput = document.querySelector('input[type="text"]');
+    searchInput.addEventListener('input', function(e) {
+        const searchTerm = e.target.value.toLowerCase();
+        document.querySelectorAll('.divide-y > a').forEach(message => {
+            const text = message.textContent.toLowerCase();
+            message.style.display = text.includes(searchTerm) ? 'block' : 'none';
+        });
+    });
+    
+    // Mark as read functionality
+    const messageLinks = document.querySelectorAll('.divide-y > a');
+    messageLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            if (e.target.tagName !== 'A' && !e.target.closest('a')) return;
+            
+            const unreadIndicator = this.querySelector('.bg-red-500');
+            if (unreadIndicator) {
+                unreadIndicator.remove();
+                this.classList.remove('bg-blue-50/50', 'dark:bg-blue-900/20');
+            }
+        });
+    });
+});
+</script>
+
+<style>
+/* Hide scrollbar for category tabs */
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+.no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+</style>
+{% endblock %}

@@ -1,0 +1,75 @@
+{% extends "principal/base.html" %}
+
+{% block content %}
+<div class="max-w-md mx-auto mt-10 bg-white dark:bg-gray-800 shadow-lg rounded-lg overflow-hidden">
+    <!-- Warning Header -->
+    <div class="bg-red-50 dark:bg-red-900/20 px-6 py-4 border-b border-red-100 dark:border-red-800">
+        <div class="flex items-center">
+            <div class="flex-shrink-0">
+                <svg class="h-10 w-10 text-red-400 dark:text-red-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+            </div>
+            <div class="ml-4">
+                <h2 class="text-xl font-semibold text-red-600 dark:text-red-300">Confirm Teacher Deletion</h2>
+                <p class="text-sm text-red-500 dark:text-red-300 mt-1">This action is permanent and cannot be undone</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Teacher Information -->
+    <div class="px-6 py-4">
+        <div class="flex items-center mb-4">
+            {% if teacher.profile.photo %}
+            <img src="{{ teacher.profile.photo.url }}" alt="Teacher photo" class="h-12 w-12 rounded-full object-cover">
+            {% else %}
+            <div class="h-12 w-12 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center">
+                <span class="text-blue-600 dark:text-blue-300 font-medium">{{ teacher.get_full_name|first }}</span>
+            </div>
+            {% endif %}
+            <div class="ml-4">
+                <h3 class="text-lg font-medium text-gray-900 dark:text-white">{{ teacher.get_full_name }}</h3>
+                <p class="text-sm text-gray-500 dark:text-gray-400">
+                    {% if teacher.subjects_taught.exists %}
+                    Teaches: {{ teacher.subjects_taught.first.name }}{% if teacher.subjects_taught.count > 1 %} +{{ teacher.subjects_taught.count|add:"-1" }} more{% endif %}
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+
+        <div class="bg-yellow-50 dark:bg-yellow-900/10 border-l-4 border-yellow-400 dark:border-yellow-500 p-4">
+            <div class="flex">
+                <div class="flex-shrink-0">
+                    <svg class="h-5 w-5 text-yellow-400 dark:text-yellow-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                </div>
+                <div class="ml-3">
+                    <p class="text-sm text-yellow-700 dark:text-yellow-300">
+                        Deleting this teacher will permanently remove their account and all associated records.
+                        Any classes assigned to this teacher will need to be reassigned.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="px-6 py-4 bg-gray-50 dark:bg-gray-700 flex justify-end">
+        <form method="post" class="flex space-x-3">
+            {% csrf_token %}
+            <a href="{% url 'principal:teacher_list' %}" 
+               class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
+                Cancel
+            </a>
+            <button type="submit" 
+                    class="px-4 py-2 bg-red-600 hover:bg-red-700 rounded-md text-sm font-medium text-white transition-colors flex items-center">
+                <svg class="-ml-1 mr-2 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+                Delete Teacher
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+db.sqlite3
+code/
+*.env
+media/
+static/
+node/
+*.log
+activate_django.bat
+temp_payments.json

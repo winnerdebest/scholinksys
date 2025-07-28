@@ -1,0 +1,197 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="flex-1 mt-16 p-6 overflow-y-auto pb-16 dark:bg-gray-900 transition-colors duration-200">
+    <!-- Social Media Style Feed -->
+    <div class="space-y-6 max-w-2xl mx-auto">
+        <!-- Announcements -->
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md border-l-4 border-blue-500 dark:border-blue-600 transition-colors duration-200">
+            <h3 class="text-lg font-semibold dark:text-white">📢 School Announcements</h3>
+            <p class="text-gray-700 dark:text-gray-300 font-medium">🎉 Inter-House Sports Competition! 🎉</p>
+            <p class="text-gray-600 dark:text-gray-400">We are excited to announce that the annual <strong class="dark:text-white">Inter-House Sports Competition</strong> will take place on <strong class="dark:text-white">April 15th, 2025</strong> at the school stadium! 🏆🎽</p>
+            <ul class="list-disc list-inside text-gray-600 dark:text-gray-400 mt-2">
+                <li>Events include track & field, relay races, high jump, and more!</li>
+                <li>All students are encouraged to participate and cheer for their houses.</li>
+                <li>Wear your house colors with pride!</li>
+            </ul>
+            <p class="text-gray-600 dark:text-gray-400 mt-2">Further details will be shared soon. Let's make this event unforgettable! 🎊</p>
+        </div>
+        
+        <!-- Student Posts -->
+        <div id="postFeed" class="space-y-6 max-w-2xl mx-auto" hx-swap-oob="afterbegin">
+            {% for post in posts %}
+                {% include "partials/post_item.html" with post=post %}
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Floating Post Button -->
+    <button id="postBtn" class="fixed bottom-20 right-6 bg-blue-700 dark:bg-blue-600 text-white p-4 rounded-full shadow-lg text-2xl flex items-center justify-center w-14 h-14 hover:bg-blue-800 dark:hover:bg-blue-700 transition duration-300">
+        <i class="fas fa-plus"></i>
+    </button>
+    
+    <!-- Modal -->
+    <div id="postModal" class="fixed inset-0 bg-gray-900 bg-opacity-50 dark:bg-opacity-70 hidden flex items-center justify-center z-50">
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg w-96 relative transition-colors duration-200">
+            <h2 class="text-xl font-bold mb-4 dark:text-white">Create Post</h2>
+            <form id="postForm" 
+                  method="POST" 
+                  action="{% url 'create_post' %}"
+                  hx-post="{% url 'create_post' %}"
+                  hx-target="#postFeed"
+                  hx-swap="afterbegin"
+                  hx-trigger="submit">
+                {% csrf_token %}
+                <div class="relative">
+                    <textarea 
+                        name="content" 
+                        id="postContent" 
+                        class="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white" 
+                        placeholder="What's on your mind?" 
+                        maxlength="500"
+                        required
+                    ></textarea>
+                    <div id="charCounter" class="absolute bottom-2 right-2 text-xs text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-700 px-1">
+                        0/500
+                    </div>
+                </div>
+                <div id="formErrors" class="text-red-500 dark:text-red-400 text-sm mt-2 hidden"></div>
+                <div class="mt-4 flex justify-end">
+                    <button type="button" id="closeModal" class="bg-gray-400 dark:bg-gray-600 text-white px-4 py-2 rounded-lg mr-2 hover:bg-gray-500 dark:hover:bg-gray-500 transition-colors duration-200">Cancel</button>
+                    <button type="submit" id="submitPost" class="bg-blue-700 dark:bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center disabled:bg-blue-400 dark:disabled:bg-blue-800 transition-colors duration-200">
+                        <span id="submitText" class="dark:text-white">Post</span>
+                        <span id="loadingIndicator" class="hidden ml-2">
+                            <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                        </span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        // Modal toggle
+        document.getElementById("postBtn").addEventListener("click", function() {
+            document.getElementById("postModal").classList.remove("hidden");
+            document.getElementById("postContent").focus();
+        });
+    
+        document.getElementById("closeModal").addEventListener("click", function() {
+            document.getElementById("postModal").classList.add("hidden");
+            resetForm();
+        });
+
+        // Character counter
+        const postContent = document.getElementById("postContent");
+        const charCounter = document.getElementById("charCounter");
+        
+        postContent.addEventListener("input", function() {
+            const currentLength = this.value.length;
+            charCounter.textContent = `${currentLength}/500`;
+            
+            // Change color when approaching limit
+            if (currentLength > 450) {
+                charCounter.classList.add("text-red-500", "dark:text-red-400");
+                charCounter.classList.remove("text-gray-500", "dark:text-gray-400");
+            } else {
+                charCounter.classList.remove("text-red-500", "dark:text-red-400");
+                charCounter.classList.add("text-gray-500", "dark:text-gray-400");
+            }
+            
+            // Enable/disable submit button based on content
+            document.getElementById("submitPost").disabled = currentLength === 0 || currentLength > 500;
+        });
+
+        // Form validation
+        function validateForm() {
+            const content = postContent.value.trim();
+            const errorContainer = document.getElementById("formErrors");
+            let isValid = true;
+            
+            errorContainer.innerHTML = '';
+            errorContainer.classList.add("hidden");
+            
+            if (content.length === 0) {
+                showError("Post content cannot be empty");
+                isValid = false;
+            } else if (content.length > 500) {
+                showError("Post cannot exceed 500 characters");
+                isValid = false;
+            }
+            
+            return isValid;
+        }
+        
+        function showError(message) {
+            const errorContainer = document.getElementById("formErrors");
+            errorContainer.textContent = message;
+            errorContainer.classList.remove("hidden");
+        }
+        
+        function resetForm() {
+            postContent.value = '';
+            charCounter.textContent = '0/500';
+            charCounter.classList.remove("text-red-500", "dark:text-red-400");
+            charCounter.classList.add("text-gray-500", "dark:text-gray-400");
+            document.getElementById("formErrors").classList.add("hidden");
+            document.getElementById("submitPost").disabled = false;
+        }
+
+        // HTMX event handlers
+        document.body.addEventListener('htmx:beforeRequest', function(evt) {
+            if (evt.detail.elt.id === 'postForm') {
+                if (!validateForm()) {
+                    evt.preventDefault();
+                    return;
+                }
+                
+                // Show loading state
+                const submitBtn = document.getElementById("submitPost");
+                const submitText = document.getElementById("submitText");
+                const loadingIndicator = document.getElementById("loadingIndicator");
+                
+                submitBtn.disabled = true;
+                submitText.textContent = "Posting...";
+                loadingIndicator.classList.remove("hidden");
+            }
+        });
+
+        document.body.addEventListener('htmx:afterRequest', function(evt) {
+            if (evt.detail.elt.id === 'postForm') {
+                const submitBtn = document.getElementById("submitPost");
+                const submitText = document.getElementById("submitText");
+                const loadingIndicator = document.getElementById("loadingIndicator");
+                
+                // Reset button state
+                submitBtn.disabled = false;
+                submitText.textContent = "Post";
+                loadingIndicator.classList.add("hidden");
+                
+                if (evt.detail.successful) {
+                    // Reset form and close modal on success
+                    resetForm();
+                    document.getElementById("postModal").classList.add("hidden");
+                    
+                    // Add animation to the new post
+                    const postFeed = document.getElementById("postFeed");
+                    if (postFeed.firstChild) {
+                        postFeed.firstChild.classList.add('opacity-0', 'transform', '-translate-y-4', 'transition-all', 'duration-300');
+                        setTimeout(() => {
+                            postFeed.firstChild.classList.remove('opacity-0', '-translate-y-4');
+                            postFeed.firstChild.classList.add('opacity-100', 'translate-y-0');
+                        }, 10);
+                    }
+                } else {
+                    // Show error if request failed
+                    showError(evt.detail.xhr.responseText || 'There was an error posting. Please try again.');
+                }
+            }
+        });
+    </script>
+</div>
+<br>
+<br>
+
+{% endblock content %}

@@ -1,0 +1,15 @@
+{% if is_student %}
+<p>Dear {{ student_name }},</p>
+<p>Welcome to {{ school_name }}! Your student account has been created.</p>
+
+{% elif is_parent %}
+<p>Dear {{ guardian_name }},</p>
+<p>You have been added as a parent for {{ student_name }} at {{ school_name }}.</p>
+{% endif %}
+
+<p><strong>Username:</strong> {{ username }}<br>
+<strong>Password:</strong> {{ password }}</p>
+
+<p>Please <a href="{{ login_url }}">log in</a> to access your account.</p>
+
+<p>Best regards,<br>{{ school_name }} Administration</p>

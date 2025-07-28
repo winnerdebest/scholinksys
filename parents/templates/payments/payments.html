@@ -1,0 +1,122 @@
+{% extends "parent_base.html" %}
+{% load humanize %}
+
+{% block title %}Parent Portal - Fee Overview{% endblock %}
+
+{% block content %}
+<div class="mb-6">
+    <h2 class="font-bold mb-3">Outstanding Payments</h2>
+    <div class="space-y-4">
+
+        {% for item in fee_data %}
+            <div class="space-y-3">
+                <h3 class="font-semibold text-lg">{{ item.student.user.get_full_name }}</h3>
+
+                {# Class Fee Block #}
+                {% if item.class_fee.balance > 0 %}
+                    <div class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-xl p-4">
+                        <div class="flex justify-between items-center mb-2">
+                            <div>
+                                <h4 class="font-medium">Class Fee - Term {{ term.name }}</h4>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">
+                                    {{ item.student.student_class.name }} - Balance due
+                                </p>
+                            </div>
+                            <span class="text-sm font-bold">₦{{ item.class_fee.balance|intcomma }}</span>
+                        </div>
+                        <div class="text-sm text-gray-500 mb-2">
+                            Original: ₦{{ item.class_fee.original|intcomma }} |
+                            Discount: ₦{{ item.class_fee.discount|intcomma }} |
+                            Paid: ₦{{ item.class_fee.paid|intcomma }}
+                        </div>
+                        <div class="flex space-x-2">
+                            <a href="{% url 'parents:select_payment_amount' student_id=student.id fee_type=fee_type fee_id=fee.id term_id=term.id %}" class="flex-1 py-2 bg-primary hover:bg-primary-hover text-white rounded-lg font-medium">
+                                Pay Now
+                            </a>
+                            <button class="px-3 py-2 border border-gray-300 rounded-lg text-gray-700">
+                                <i class="fas fa-info-circle"></i>
+                            </button>
+                        </div>
+                    </div>
+                {% endif %}
+
+                {# Additional Fees Block #}
+                {% for fee in item.additional_fees %}
+                    {% if fee.balance > 0 %}
+                        <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl p-4">
+                            <div class="flex justify-between items-center mb-2">
+                                <div>
+                                    <h4 class="font-medium">{{ fee.name }}</h4>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400">Due this term</p>
+                                </div>
+                                <span class="text-sm font-bold">₦{{ fee.balance|intcomma }}</span>
+                            </div>
+                            <div class="text-sm text-gray-500 mb-2">
+                                Original: ₦{{ fee.amount|intcomma }} | Paid: ₦{{ fee.paid|intcomma }}
+                            </div>
+
+                            <a href="{% url 'parents:select_payment_amount' student_id=student.id fee_type=fee_type fee_id=fee.id term_id=term.id %}" class="w-full py-2 bg-primary hover:bg-primary-hover text-white rounded-lg font-medium">
+                                Pay Now
+                            </a>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        {% empty %}
+            <p class="text-gray-600">No outstanding fees at the moment.</p>
+        {% endfor %}
+    </div>
+</div>
+
+{# Payment History Section (if implemented later) #}
+{# 
+<div class="mb-6">
+    <h2 class="font-bold mb-3">Payment History</h2>
+    <div class="space-y-3">
+        {% for payment in payment_history %}
+            <div class="bg-white dark:bg-gray-700 rounded-xl shadow-sm p-4">
+                <div class="flex justify-between items-center mb-1">
+                    <div>
+                        <h3 class="font-medium">{{ payment.description }}</h3>
+                        <p class="text-xs text-gray-500">Receipt #{{ payment.receipt_no }}</p>
+                    </div>
+                    <span class="text-sm font-bold text-green-600">₦{{ payment.amount }}</span>
+                </div>
+                <div class="flex justify-between items-center mt-2">
+                    <span class="text-xs text-gray-500">Paid on {{ payment.date }}</span>
+                    <button class="text-xs text-primary flex items-center">
+                        <i class="fas fa-receipt mr-1"></i> Receipt
+                    </button>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+#}
+
+<!-- Payment Information -->
+<div class="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-4">
+    <div class="flex items-start">
+        <div class="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center text-blue-500 dark:text-blue-300 mr-3">
+            <i class="fas fa-info-circle"></i>
+        </div>
+        <div>
+            <h3 class="font-medium mb-1">Payment Information</h3>
+            <p class="text-sm text-gray-600 dark:text-gray-300">
+                All payments are processed securely. For any payment issues, please contact the school office.
+            </p>
+            <button class="text-sm text-primary mt-2 flex items-center">
+                <i class="fas fa-phone-alt mr-2"></i> Contact Support
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('Payments page loaded');
+    });
+</script>
+{% endblock %}

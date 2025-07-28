@@ -1,0 +1,167 @@
+{% extends 'principal/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="max-w-2xl mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-md">
+        <div class="p-6">
+            <h1 class="text-2xl font-bold text-gray-800 dark:text-white mb-6">
+                {% if expense %}Edit Expense{% else %}Create New Expense{% endif %}
+            </h1>
+
+            <form method="POST" enctype="multipart/form-data" class="space-y-6">
+                {% csrf_token %}
+
+                <!-- Category Selection/Creation -->
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Category *
+                        </label>
+                        <div class="flex items-center space-x-4 mb-2">
+                            <label class="inline-flex items-center">
+                                <input type="radio" name="category_choice" value="existing" checked
+                                    class="form-radio text-primary-600"
+                                    onchange="toggleCategoryInputs(this.value)">
+                                <span class="ml-2 text-gray-700 dark:text-gray-300">Select Existing</span>
+                            </label>
+                            <label class="inline-flex items-center">
+                                <input type="radio" name="category_choice" value="new"
+                                    class="form-radio text-primary-600"
+                                    onchange="toggleCategoryInputs(this.value)">
+                                <span class="ml-2 text-gray-700 dark:text-gray-300">Create New</span>
+                            </label>
+                        </div>
+                        
+                        <!-- Existing Category Dropdown -->
+                        <div id="existing-category-input">
+                            <select name="category" id="category-select"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                <option value="">Select a category</option>
+                                {% for category in categories %}
+                                <option value="{{ category.id }}" {% if expense and expense.category.id == category.id %}selected{% endif %}>
+                                    {{ category.name }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <!-- New Category Inputs -->
+                        <div id="new-category-input" class="space-y-3 hidden">
+                            <input type="text" name="new_category_name" placeholder="Category Name"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                            <textarea name="new_category_description" placeholder="Category Description (optional)" rows="2"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Amount -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Amount *
+                    </label>
+                    <input type="number" name="amount" step="0.01" required
+                        value="{{ expense.amount|default:'' }}"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                </div>
+
+                <!-- Description -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Description *
+                    </label>
+                    <textarea name="description" required rows="3"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">{{ expense.description|default:'' }}</textarea>
+                </div>
+
+                <!-- Date -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Date *
+                    </label>
+                    <input type="date" name="date" required
+                        value="{{ expense.date|date:'Y-m-d'|default:'' }}"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                </div>
+
+                <!-- Payment Status -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Payment Status *
+                    </label>
+                    <select name="payment_status" required
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                        {% for status, label in payment_status_choices %}
+                        <option value="{{ status }}" {% if expense and expense.payment_status == status %}selected{% endif %}>
+                            {{ label }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Payment Date -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Payment Date
+                    </label>
+                    <input type="date" name="payment_date"
+                        value="{{ expense.payment_date|date:'Y-m-d'|default:'' }}"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                </div>
+
+                <!-- Receipt -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Receipt
+                    </label>
+                    <input type="file" name="receipt" accept="image/*,.pdf"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                    {% if expense.receipt %}
+                    <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                        Current file: {{ expense.receipt.name }}
+                    </p>
+                    {% endif %}
+                </div>
+
+                <!-- Submit Button -->
+                <div class="flex justify-end space-x-4">
+                    <a href="{% url 'principal:expense_list' %}"
+                        class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700">
+                        Cancel
+                    </a>
+                    <button type="submit"
+                        class="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500">
+                        {% if expense %}Update{% else %}Create{% endif %} Expense
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+function toggleCategoryInputs(choice) {
+    const existingInput = document.getElementById('existing-category-input');
+    const newInput = document.getElementById('new-category-input');
+    const categorySelect = document.getElementById('category-select');
+
+    if (choice === 'existing') {
+        existingInput.classList.remove('hidden');
+        newInput.classList.add('hidden');
+        categorySelect.setAttribute('required', 'required');
+        newInput.querySelectorAll('input, textarea').forEach(input => input.removeAttribute('required'));
+    } else {
+        existingInput.classList.add('hidden');
+        newInput.classList.remove('hidden');
+        categorySelect.removeAttribute('required');
+        newInput.querySelector('input[name="new_category_name"]').setAttribute('required', 'required');
+    }
+}
+
+// Initialize the form
+document.addEventListener('DOMContentLoaded', function() {
+    toggleCategoryInputs('existing');
+});
+</script>
+{% endblock content %} 

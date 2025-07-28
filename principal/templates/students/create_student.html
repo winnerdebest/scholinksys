@@ -1,0 +1,204 @@
+{% extends "principal/base.html" %}
+{% load static %}
+
+{% block title %}{% if student %}Update{% else %}Register{% endif %} Student{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8 max-w-6xl">
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
+        <!-- Header -->
+        <div class="bg-blue-600 dark:bg-blue-800 px-6 py-4">
+            <h1 class="text-2xl font-bold text-white">{% if student %}Update{% else %}Register{% endif %} Student</h1>
+            <p class="text-blue-100 dark:text-blue-200">{% if student %}Update{% else %}Fill in{% endif %} the student details below</p>
+        </div>
+        {% if messages %}
+  <div class="space-y-3 mt-4">
+    {% for message in messages %}
+      <div 
+        class="px-4 py-3 rounded-md text-sm font-medium border 
+               {% if message.tags == 'success' %}bg-green-100 text-green-800 border-green-300
+               {% elif message.tags == 'error' %}bg-red-100 text-red-800 border-red-300
+               {% elif message.tags == 'warning' %}bg-yellow-100 text-yellow-800 border-yellow-300
+               {% else %}bg-blue-100 text-blue-800 border-blue-300{% endif %}">
+        {{ message }}
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}
+
+
+        <!-- Form -->
+        <form method="POST" enctype="multipart/form-data" class="p-6 space-y-6">
+            {% csrf_token %}
+            
+            <!-- Student Basic Information -->
+            <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+                <h2 class="text-lg font-semibold text-gray-800 dark:text-white mb-4 border-b pb-2">Student Information</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- First Name -->
+                    <div>
+                        <label for="first_name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">First Name *</label>
+                        <input type="text" id="first_name" name="first_name" value="{{ student.user.first_name|default:'' }}" required 
+                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:text-white">
+                    </div>
+                    
+                    <!-- Last Name -->
+                    <div>
+                        <label for="last_name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Last Name *</label>
+                        <input type="text" id="last_name" name="last_name" value="{{ student.user.last_name|default:'' }}" required
+                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:text-white">
+                    </div>
+                    
+                    <!-- Email -->
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Email *</label>
+                        <input type="email" id="email" name="email" value="{{ student.user.email|default:'' }}" required
+                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:text-white">
+                    </div>
+                    
+                    <!-- Phone -->
+                    <div>
+                        <label for="phone_number" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Phone Number</label>
+                        <input type="tel" id="phone_number" name="phone_number" value="{{ student.phone_number|default:'' }}"
+                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:text-white">
+                    </div>
+                    
+                    <!-- Class -->
+                    <div>
+                        <label for="class_id" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Class *</label>
+                        <select id="class_id" name="class_id" required
+                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:text-white">
+                            <option value="">Select Class</option>
+                            {% for class in classes %}
+                            <option value="{{ class.id }}" {% if student.student_class.id == class.id %}selected{% endif %}>{{ class.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <!-- Photo -->
+                    <div>
+                        <label for="photo" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Student Photo</label>
+                        <div class="flex items-center">
+                            <input type="file" id="photo" name="photo" accept="image/*"
+                                class="hidden" onchange="previewImage(this)">
+                            <label for="photo" class="cursor-pointer px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:text-white">
+                                <i class="fas fa-camera mr-2"></i>Choose File
+                            </label>
+                            <span id="file-name" class="ml-3 text-sm text-gray-500 dark:text-gray-400">
+                                {% if student.photo %}Current: {{ student.photo.name|slice:"20:" }}{% else %}No file chosen{% endif %}
+                            </span>
+                        </div>
+                        <div id="image-preview" class="mt-2 {% if not student.photo %}hidden{% endif %}">
+                            <img id="preview" src="{% if student.photo %}{{ student.photo.url }}{% endif %}" class="h-32 rounded-md border border-gray-200 dark:border-gray-600">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+           
+
+            <!-- Discount Section -->
+            <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+                <h2 class="text-lg font-semibold text-gray-800 dark:text-white mb-4 border-b pb-2">Fee Discount (Optional)</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <!-- Discount Type -->
+                    <div>
+                        <label for="discount_type" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Discount Type</label>
+                        <select id="discount_type" name="discount_type"
+                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:text-white">
+                            <option value="">Select Type</option>
+                            {% for type, display in discount_types %}
+                            <option value="{{ type }}" {% if student.discounts.first and student.discounts.first.discount_type == type %}selected{% endif %}>{{ display }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <!-- Discount Value -->
+                    <div>
+                        <label for="discount_value" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Value</label>
+                        <input type="number" id="discount_value" name="discount_value" min="0" step="0.01" 
+                            value="{% if student.discounts.first %}{{ student.discounts.first.discount_value }}{% endif %}"
+                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:text-white">
+                    </div>
+                    
+                    <!-- Academic Year -->
+                    <div>
+                        <label for="academic_year" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Academic Year</label>
+                        <input type="text" id="academic_year" name="academic_year"
+                            value="{% if student.discounts.first %}{{ student.discounts.first.academic_year }}{% else %}{{ current_year }}/{{ current_year|add:1 }}{% endif %}"
+                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:text-white">
+                    </div>
+                    
+                    <!-- Reason -->
+                    <div>
+                        <label for="discount_reason" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Reason</label>
+                        <input type="text" id="discount_reason" name="discount_reason"
+                            value="{% if student.discounts.first %}{{ student.discounts.first.reason }}{% endif %}"
+                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:text-white">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form Actions -->
+            <div class="flex justify-end space-x-4 pt-4 border-t border-gray-200 dark:border-gray-600">
+                <a href="{% url 'principal:student_list' %}" class="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors duration-200">
+                    Cancel
+                </a>
+                <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200">
+                    {% if student %}Update{% else %}Register{% endif %} Student
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- JavaScript for dynamic form elements -->
+<script>
+    // Image preview functionality
+    function previewImage(input) {
+        const file = input.files[0];
+        const preview = document.getElementById('preview');
+        const fileName = document.getElementById('file-name');
+        const imagePreview = document.getElementById('image-preview');
+        
+        if (file) {
+            fileName.textContent = file.name;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                preview.src = e.target.result;
+                imagePreview.classList.remove('hidden');
+            }
+            reader.readAsDataURL(file);
+        } else {
+            fileName.textContent = 'No file chosen';
+            imagePreview.classList.add('hidden');
+        }
+    }
+
+  
+
+    /
+
+    // Set current academic year as default if not already set
+    document.addEventListener('DOMContentLoaded', function() {
+        const academicYearInput = document.getElementById('academic_year');
+        if (academicYearInput && !academicYearInput.value) {
+            const currentYear = new Date().getFullYear();
+            academicYearInput.value = `${currentYear}/${currentYear + 1}`;
+        }
+    });
+</script>
+
+<style>
+    .guardian-entry {
+        transition: all 0.3s ease;
+    }
+    
+    #image-preview {
+        transition: opacity 0.3s ease;
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,94 @@
+{% extends "principal/base.html" %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto mt-8 bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
+    <!-- Form Header -->
+    <div class="bg-blue-600 dark:bg-blue-800 px-6 py-4">
+        <h2 class="text-2xl font-semibold text-white">Edit Teacher Profile</h2>
+        <p class="text-blue-100 dark:text-blue-200">Update teacher information</p>
+    </div>
+
+
+    <!-- Main Form -->
+    <form method="post" enctype="multipart/form-data" class="p-6">
+        {% csrf_token %}
+        
+        <!-- Personal Information -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <!-- First Name -->
+            <div class="space-y-2">
+                <label for="first_name" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    First Name *
+                </label>
+                <input type="text" id="first_name" name="first_name" value="{{ teacher.user.first_name }}" required
+                    class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
+            </div>
+
+            <!-- Last Name -->
+            <div class="space-y-2">
+                <label for="last_name" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    Last Name *
+                </label>
+                <input type="text" id="last_name" name="last_name" value="{{ teacher.user.last_name }}" required
+                    class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
+            </div>
+
+            <!-- Email -->
+            <div class="md:col-span-2 space-y-2">
+                <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    Email *
+                </label>
+                <input type="email" id="email" name="email" value="{{ teacher.user.email }}" required
+                    class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
+            </div>
+            <!-- Salary -->
+            <div class="md:col-span-2 space-y-2">
+                <label for="salary" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    Salary
+                </label>
+                <input type="number" id="salary" name="salary" value="{{ teacher.salary }}" step="0.01"
+                    class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                    placeholder="Enter salary amount">
+                <p class="text-xs text-gray-500 dark:text-gray-400">Monthly salary amount (optional)</p>
+            </div>
+
+
+        </div>
+
+
+
+        <!-- Form Actions -->
+        <div class="flex justify-end space-x-3 border-t border-gray-200 dark:border-gray-700 pt-6">
+            <a href="{% url 'principal:teacher_list' %}" 
+               class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors">
+                Cancel
+            </a>
+            <button type="submit" 
+                    class="px-6 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-sm font-medium text-white transition-colors flex items-center">
+                <svg class="-ml-1 mr-2 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+                Save Changes
+            </button>
+        </div>
+    </form>
+</div>
+
+<script>
+    // Show selected file name
+    document.querySelector('input[name="photo"]').addEventListener('change', function(e) {
+        const fileName = e.target.files[0]?.name || 'No file selected';
+        const fileNameDisplay = document.createElement('span');
+        fileNameDisplay.className = 'ml-3 text-sm text-gray-500 dark:text-gray-400';
+        fileNameDisplay.textContent = fileName;
+        
+        // Remove existing file name if present
+        const existingDisplay = document.querySelector('input[name="photo"]').nextElementSibling;
+        if (existingDisplay && existingDisplay.tagName === 'SPAN') {
+            existingDisplay.remove();
+        }
+        
+        e.target.parentNode.parentNode.appendChild(fileNameDisplay);
+    });
+</script>
+{% endblock %}

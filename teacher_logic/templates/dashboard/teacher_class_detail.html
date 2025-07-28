@@ -1,0 +1,63 @@
+{% extends "dashboard/base.html" %}
+{% block title %}{{ school_class.name }} - Subjects{% endblock %}
+
+{% block content %}
+<section class="bg-white p-6 rounded-xl shadow-sm dark:bg-gray-800 dark:shadow-none dark:border dark:border-gray-700">
+    <div class="mb-6">
+        <div class="flex justify-between items-start">
+            <div>
+                <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100">{{ school_class.name }}</h2>
+                <p class="text-gray-500 mt-1 dark:text-gray-400">
+                    <span class="font-medium">{{ school_class.students.count }}</span> Students
+                    {% if form_master %}
+                    <span class="ml-3 bg-green-100 text-green-800 text-xs font-medium px-2 py-0.5 rounded-full dark:bg-green-900/30 dark:text-green-400">Form Master</span>
+                    {% endif %}
+                </p>
+            </div>
+            <div class="flex space-x-2">
+                <a href="#" class="p-2 rounded-lg bg-gray-50 hover:bg-gray-100 text-gray-600 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
+                    </svg>
+                </a>
+            </div>
+        </div>
+
+    </div>
+
+    {% if class_subjects %}
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {% for cs in class_subjects %}
+            <div class="border border-gray-100 rounded-xl p-5 hover:shadow-md transition-shadow dark:border-gray-700 dark:hover:shadow-lg dark:hover:shadow-gray-800/50 dark:bg-gray-700/50 group">
+                <div class="flex justify-between items-start mb-4">
+                    <h3 class="text-lg font-bold text-gray-800 dark:text-gray-200">{{ cs.subject.name }}</h3>
+                    <span class="bg-primary-50 text-primary-600 text-xs font-medium px-2 py-1 rounded-full dark:bg-gray-600 dark:text-primary-300">
+                        {{ cs.teacher.user.get_full_name|default:cs.teacher.user.username }}
+                    </span>
+                </div>
+                
+                <div class="flex flex-col gap-2">
+                    <a href="{% url 'teacher:class_subject_detail' cs.id %}" class="bg-primary-600 text-white px-3 py-2 rounded-lg hover:bg-primary-700 text-sm font-medium text-center transition-colors dark:bg-primary-700 dark:hover:bg-primary-600">
+                        View Subject Details
+                    </a>
+
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="text-center py-10">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <h3 class="mt-2 text-lg font-medium text-gray-600 dark:text-gray-300">No Subjects Assigned</h3>
+            <p class="mt-1 text-gray-500 dark:text-gray-400">You are not currently handling any subjects in this class.</p>
+            {% if request.user.is_admin %}
+            <a href="#" class="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary-600 hover:bg-primary-700 dark:bg-primary-700 dark:hover:bg-primary-600">
+                Assign Subjects
+            </a>
+            {% endif %}
+        </div>
+    {% endif %}
+</section>
+{% endblock %}

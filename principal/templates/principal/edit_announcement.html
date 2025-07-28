@@ -1,0 +1,65 @@
+{% extends 'principal/base.html' %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="max-w-2xl mx-auto">
+        <h1 class="text-2xl font-bold text-gray-800 dark:text-white mb-6">Edit Announcement</h1>
+        
+        <form method="post" class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+            {% csrf_token %}
+            
+            <div class="mb-4">
+                <label for="title" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Title</label>
+                <input type="text" name="title" id="title" required value="{{ announcement.title }}"
+                       class="w-full px-3 py-2 border rounded-lg focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+            </div>
+
+            <div class="mb-4">
+                <label for="content" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Content</label>
+                <textarea name="content" id="content" rows="4" required
+                          class="w-full px-3 py-2 border rounded-lg focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">{{ announcement.content }}</textarea>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <div>
+                    <label for="priority" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Priority</label>
+                    <select name="priority" id="priority"
+                            class="w-full px-3 py-2 border rounded-lg focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                        {% for value, label in priority_choices %}
+                        <option value="{{ value }}" {% if announcement.priority == value %}selected{% endif %}>
+                            {{ label }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div>
+                    <label for="expiry_date" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Expiry Date (Optional)</label>
+                    <input type="datetime-local" name="expiry_date" id="expiry_date"
+                           value="{{ announcement.expiry_date|date:'Y-m-d\TH:i' }}"
+                           class="w-full px-3 py-2 border rounded-lg focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <label class="flex items-center">
+                    <input type="checkbox" name="is_active" {% if announcement.is_active %}checked{% endif %}
+                           class="rounded border-gray-300 text-primary-600 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700">
+                    <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">Active</span>
+                </label>
+            </div>
+
+            <div class="flex justify-end space-x-4">
+                <a href="{% url 'principal:principal_dashboard' %}" 
+                   class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700">
+                    Cancel
+                </a>
+                <button type="submit" 
+                        class="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2">
+                    Update Announcement
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %} 

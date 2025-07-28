@@ -1,0 +1,39 @@
+{% extends "dashboard/base.html" %}
+
+{% block content %}
+<div class="min-h-screen flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8 bg-gray-50 dark:bg-gray-900">
+  <div class="max-w-md w-full space-y-8 text-center">
+    <!-- Icon -->
+    <div class="mx-auto h-32 w-32 flex items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/50">
+      <svg class="h-20 w-20 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+      </svg>
+    </div>
+
+    <!-- Heading -->
+    <h2 class="mt-6 text-3xl font-extrabold text-gray-900 dark:text-white">
+      No Class Assigned
+    </h2>
+
+    <!-- Message -->
+    <div class="text-gray-600 dark:text-gray-300 space-y-2">
+      <p class="text-lg">
+        You currently don't have any classes assigned to you.
+      </p>
+      <p>
+        Please contact your administrator to be assigned to a class.
+      </p>
+    </div>
+
+    <!-- Actions -->
+    <div class="mt-8 flex flex-col sm:flex-row justify-center gap-4">
+      <a href="{% url 'teacher:teacher_dashboard' %}" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 text-white font-medium rounded-lg shadow transition-colors duration-300">
+        Return to Dashboard
+      </a>
+      <a href="mailto:admin@school.edu" class="px-6 py-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-medium rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors duration-300">
+        Contact Admin
+      </a>
+    </div>
+  </div>
+</div>
+{% endblock %}

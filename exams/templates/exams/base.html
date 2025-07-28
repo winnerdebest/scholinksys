@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>{% block title %}Exam Portal{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.5"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+
+    <!-- Navbar -->
+    <nav class="bg-white shadow">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Brand -->
+                <div class="flex items-center space-x-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span class="text-xl font-bold text-gray-800">Scholink</span>
+                </div>
+
+                <!-- Navigation -->
+                <div class="flex space-x-6">
+                    <a href="#" class="text-purple-600 font-medium border-b-2 border-purple-600 pb-1">Active Exams</a>
+                    <a href="{% url "exam_logout" %}" class="text-red-600 font-medium border-b-2 border-red-600 pb-1">Logout</a>
+
+                </div>
+
+                <!-- User Info -->
+                <div class="flex items-center space-x-4">
+                    <div class="text-right">
+                        <p class="text-sm font-semibold text-gray-700">{{ request.user.get_full_name }}</p>
+                        <p class="text-xs text-gray-500">{{ request.user.student_profile.student_class.name }}</p>
+                    </div>
+                    {% if request.user.student_profile.photo %}
+  <img class="h-9 w-9 rounded-full bg-gray-200" src="{{ request.user.student_profile.photo.url }}" alt="Profile" />
+{% else %}
+  <div class="h-9 w-9 rounded-full bg-gray-200 flex items-center justify-center text-xs text-gray-500">
+    N/A
+  </div>
+{% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        <!-- Page Header -->
+        <div class="flex justify-between items-center mb-6">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900">{% block exam_title %}{{ exam.title }}{% endblock %}</h1>
+                <p class="text-gray-600 text-sm mt-1">{% block exam_subtitle %}{% endblock %}</p>
+            </div>
+            {% if block.super %}
+            <div class="flex items-center space-x-4">
+                <div class="bg-purple-100 text-purple-800 px-4 py-2 rounded-full flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span id="timer" class="font-semibold">{% block initial_timer %}{% endblock %}</span>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Dynamic Content -->
+        <div class="bg-white shadow rounded-lg p-6">
+            {% block content %}
+            {% endblock %}
+        </div>
+
+    </main>
+</body>
+</html>

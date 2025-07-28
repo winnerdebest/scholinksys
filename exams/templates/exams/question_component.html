@@ -1,0 +1,34 @@
+{% load exam_filters %}
+
+<div class="border p-4 rounded-lg">
+    <h3 class="font-semibold">{{ question.text }}</h3>
+    
+    {% if question.image %}
+    <img src="{{ question.image.url }}" class="mt-2 w-full rounded-lg">
+    {% endif %}
+
+    <form id="question-form-{{ question.id }}">
+        {% for option in "ABCD" %}
+        <label class="block mt-2 p-2 border rounded-lg cursor-pointer hover:bg-gray-100 flex items-center space-x-2">
+            <input type="radio" name="question_{{ question.id }}" value="{{ option }}"
+                   {% if student_answer == option %}checked{% endif %} class="mr-2">
+            
+            {% with question|get_option_text:option as option_text %}
+            {% with question|get_option_image:option as option_image %}
+                
+                <span class="font-semibold">{{ option }}.</span>
+                
+                {% if option_image %}
+                    <img src="{{ option_image.url }}" alt="Option {{ option }}" class="h-16 w-auto rounded-md">
+                {% elif option_text %}
+                    <span>{{ option_text }}</span>
+                {% endif %}
+                
+            {% endwith %}
+            {% endwith %}
+        </label>
+        {% endfor %}
+        
+        <input type="hidden" name="question_id" value="{{ question.id }}">
+    </form>
+</div>

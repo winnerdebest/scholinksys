@@ -1,0 +1,88 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scholink - Student Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 flex flex-col min-h-screen">
+    <!-- Header -->
+    <header class="bg-white p-4 shadow-md flex justify-between items-center w-full fixed top-0 left-0 z-50">
+        <h3 class="text-lg font-semibold">Scholink</h3>
+        <div class="flex items-center space-x-4">
+            <!-- Display Logged-in User's Full Name -->
+            <span class="text-lg font-semibold">
+                {{ request.user.get_full_name|default:request.user.username }}
+            </span>
+
+            <!-- Notifications Icon -->
+            <a href="#" class="relative">
+                <i class="fas fa-bell text-xl text-gray-600"></i>
+                <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs px-1 rounded-full">3</span>
+            </a>
+
+            <!-- User Profile Picture -->
+            <a href="#">
+                <div class="w-10 h-10 rounded-full overflow-hidden bg-gray-300 flex items-center justify-center">
+                    {% if request.user.student_profile.photo %}
+                        <img src="{{ request.user.student_profile.photo.url }}" alt="Profile Picture" class="w-10 h-10 object-cover">
+                    {% else %}
+                        <i class="fas fa-user text-gray-600 text-2xl"></i>
+                    {% endif %}
+                </div>
+            </a>
+        </div>
+    </header>
+
+    {% block content %}
+    {% endblock content %}
+
+    <!-- Bottom Navigation Bar with Labels -->
+    <nav class="bg-white shadow-md p-4 flex justify-around items-center fixed bottom-0 left-0 w-full z-50 border-t">
+        <a href="{% url "student_dashboard" %}" class="text-gray-600 hover:text-blue-700 flex flex-col items-center">
+            <i class="fas fa-home text-2xl"></i>
+            <span class="text-xs">Home</span>
+        </a>
+        <a href="{% url "assignments" %}" class="text-gray-600 hover:text-blue-700 flex flex-col items-center">
+            <i class="fas fa-book text-2xl"></i>
+            <span class="text-xs">Assignment</span>
+        </a>
+        <a href="#" class="text-gray-600 hover:text-blue-700 flex flex-col items-center">
+            <i class="fas fa-chart-bar text-2xl"></i>
+            <span class="text-xs">Grades</span>
+        </a>
+        <a href="{% url "profile" %}" class="text-gray-600 hover:text-blue-700 flex flex-col items-center">
+            <i class="fas fa-user text-2xl"></i>
+            <span class="text-xs">Profile</span>
+        </a>
+        <a href="#" class="text-gray-600 hover:text-blue-700 flex flex-col items-center">
+            <i class="fas fa-trophy text-2xl"></i>
+            <span class="text-xs">LeaderBoard</span>
+        </a>
+    </nav>
+
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <script>
+    document.body.addEventListener('htmx:afterOnLoad', function(evt) {
+        if (evt.detail.elt.classList.contains('like-btn') || evt.detail.elt.classList.contains('dislike-btn')) {
+            const response = evt.detail.xhr.response;
+            const data = JSON.parse(response);
+            
+            const likeBtn = evt.detail.elt.closest('.post-item').querySelector('.like-btn');
+            const dislikeBtn = evt.detail.elt.closest('.post-item').querySelector('.dislike-btn');
+            
+            // Update like button
+            likeBtn.querySelector('.like-count').textContent = data.total_likes;
+            likeBtn.classList.toggle('text-blue-600', data.liked);
+            
+            // Update dislike button
+            dislikeBtn.querySelector('.dislike-count').textContent = data.total_dislikes;
+            dislikeBtn.classList.toggle('text-red-600', data.disliked);
+        }
+        });
+    </script>
+</body>
+</html>
