@@ -33,10 +33,10 @@ else:
 
 
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['scholinksys.onrender.com', "*"]
 
 
-CSRF_TRUSTED_ORIGINS = ["https://*.ngrok-free.app",]
+CSRF_TRUSTED_ORIGINS = ["https://*.ngrok-free.app", "https://scholinksys.onrender.com"]
 
 
 CORS_ALLOW_ALL_ORIGINS = True
@@ -134,7 +134,7 @@ DATABASES = {
 
 
 
-POSTGRESS_LOCALLY = False
+POSTGRESS_LOCALLY = True
 if ENVIRONMENT == 'production' or POSTGRESS_LOCALLY == True:
         DATABASES['default'] = dj_database_url.parse(env('DATABASE_URL'))
 
